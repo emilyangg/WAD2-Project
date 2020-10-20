@@ -17,13 +17,14 @@ function call_api($url) {
     // (deletes the variable made by curl_init)
     curl_close($curl);
 
-    $out_assoc = json_decode($output);
+    // $out_assoc = json_decode($output);
 
     return $output;
 
 }
 
-$url = "http://localhost/midterm/api/winner/read.php";
+//$url = "http://localhost/midterm/api/winner/read.php";
+$url = 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c&q=jones';
 
 echo call_api($url)
 

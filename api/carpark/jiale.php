@@ -34,7 +34,7 @@ function callAPI($method, $url, $data){
 
 $get_data = callAPI('GET', 'http://localhost/midterm/api/winner/read.php', false);
 $response = json_decode($get_data, true);
-$errors = $response['response']['errors'];
-$data = $response['response']['data'][0];
+
+echo $get_data
 
 ?>
