@@ -25,6 +25,10 @@ function callAPI($method, $url, $data){
     ));
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
     curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+    curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, 0);
+    curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+
     // EXECUTE:
     $result = curl_exec($curl);
     if(!$result){die("Connection Failure");}
@@ -32,7 +36,7 @@ function callAPI($method, $url, $data){
     return $result;
 }
 
-$get_data = callAPI('GET', 'http://localhost/midterm/api/winner/read.php', false);
+$get_data = callAPI('GET', 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c&q=jones', false);
 $response = json_decode($get_data, true);
 
 echo $get_data
