@@ -1,0 +1,46 @@
+<html>
+<head>
+    <title>SampleMLBB API Documentation</title>
+</head>
+<body>
+
+    <h1>SampleMLBB API v1.0 - Documentation</h1>
+    
+    <hr>
+    
+    
+    <h2>read all</h2>
+    <p>
+        <b>Description</b>
+        <br>
+        Returns a collection of MLBB heroes in JSON format.
+    </p>
+    <p>
+        <b>HTTP request</b>
+        <br>
+        <font face="Courier New" color="blue">GET http://localhost/sample_midterm/api/hero/read.php</font>
+    </p>
+    
+    <hr>
+        
+    <h2>search</h2>
+    <p>
+        <b>Description</b>
+        <br>
+        Returns a collection of MLBB heroes of a certain <b>class</b> in JSON format.
+    </p>
+    <p>
+        <b>HTTP request</b>
+        <br>
+        <font face="Courier New" color="blue">GET http://localhost/sample_midterm/api/hero/search.php?c=mage</font>
+        <br>
+        where <b>c</b> is the <b>class</b> parameter, and<br>
+        mage is the value <i>(e.g. mage, fighter, support, tank, assassin, marksman)</i>.
+        
+    </p>
+    
+    <hr>
+    
+    <footer>&copy; Copyright 2020 Krazy Woman</footer>
+</body>
+</html>
