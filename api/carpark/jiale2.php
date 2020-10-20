@@ -4,7 +4,7 @@ function call_api($url) {
     $curl = curl_init();
 
     // set our url with curl_setopt()
-    curl_setopt($curl, CURLOPT_URL, );
+    curl_setopt($curl, CURLOPT_URL,$url );
 
     // return the transfer as a string, also with setopt()
     curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -25,7 +25,7 @@ function call_api($url) {
 
 $url = "http://localhost/midterm/api/winner/read.php";
 
-echo call_api()
+echo call_api($url)
 
 
 ?>
