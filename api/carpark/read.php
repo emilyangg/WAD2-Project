@@ -5,17 +5,17 @@ header("Content-Type: application/json; charset=UTF-8");
 
 // include database and object files
 include_once '../config/database.php';
-include_once '../objects/Hero.php';
+include_once '../objects/carpark.php';
 
 // instantiate database and product object
 $database = new Database();
 $db = $database->getConnection();
 
 // initialize object
-$hero = new Hero($db);
+$carpark = new Carpark($db);
 
 // query products
-$stmt = $hero->read();
+$stmt = $carpark->read();
 $num = $stmt->rowCount();
 
 // check if more than 0 record found
@@ -32,31 +32,25 @@ if($num > 0) {
         extract($row);
 
         $item = array(
-            "id" => $id,
-            "name" => $name,
-            "class" => $class,
-
-            "purchase" => [
-                "battlepoint_cost" => $battlepoint_cost,
-                "diamond_cost" => $diamond_cost
+            "_id" => $id,
+            "address" => $address,
+            "car_park_no" => $car_park_no,
+            "coordinates" => [
+                "y_coord" => $y_coord,
+                "x_coord" => $x_coord
             ],
-
-            "stats" => [
-                "movement_speed" => $movement_speed,
-                "physical_attack" => $physical_attack,
-                "physical_defense" => $physical_defense,
-                "magic_power" => $magic_power,
-                "armor" => $armor,
-                "magic_resistance" => $magic_resistance,
-                "hp" => $hp,
-                "mana" => $mana,
-                "attack_speed" => $attack_speed,
-                "hp_regen_rate" => $hp_regen_rate,
-                "mana_regen_rate" => $mana_regen_rate
+            "parking_info" => [
+                "short_term_parking" => $short_term_parking,
+                "free_parking" => $free_parking,
+                "night_parking" => $night_parking,
+                "type_of_parking_system" => $type_of_parking_system
             ],
-            
-            "img_profile_url" => $img_profile_url,
-            "description" => html_entity_decode($description)
+            "carpark_info" => [
+                "car_park_type" => $car_park_type,
+                "gantry_height" => $gantry_height,
+                "car_park_basement" => $car_park_basement,
+                "car_park_decks" => $car_park_decks
+            ]
         );
 
         array_push($result_arr["records"], $item);
