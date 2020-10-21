@@ -1,5 +1,5 @@
 <?php
-include './ura.php';
+include './read.php';
 include './xyToSvy21.php';
 
 // Given Lat and Long (SMU LKCSB)
@@ -18,13 +18,22 @@ $maxEasting = $easting + 100;
 $minNorthing = $northing - 100;
 $maxNorthing = $northing + 100;
 
+// Get Associative Array of nearby CP and its details (CP_no => [carpark details])
 
-// Get CP that has Eastings and Northings within the range
+
+// -----------------------------------------------------
+// Return Associative Array with CP that  Initiate nearby carpark number arr
+$nearby_CP_No_arr = [];
+
+// Store CP (that have Eastings and Northings within the range) and carpark type "C" 
 $cpEast = "123";
 $cpNorth = "456";
 
-if ($cpEast >= $minEasting and $cpEast <= $minEasting )
+if ($cpEast >= $minEasting and $cpEast <= $maxEasting and $cpNorth >= $minNorthing and $cpEast <= $maxNorthing) {
+    array_push($nearby_CP_No_arr, $carparkNo);
+}
 
+//--------------------------------------------------------------
 
 // Call URA CP to get:
 // Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20, lot type: C
