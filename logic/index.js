@@ -15,14 +15,14 @@ function getGeoLocation() {
 //convert address to lat/longitude
 function convert_geocode(address) {
   var processed_address = "";
-  var url_encode = {
-     :"%20";
-    '"': "%22";
+  // var url_encode = {
+  //    :"%20";
+  //   '"': "%22";
 
-  }
-  for (ch of address) {
-    for 
-  }
+  // }
+  // for (ch of address) {
+  //   for 
+  // }
   var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if( request.readyState == 4 && request.status == 200 ) {
