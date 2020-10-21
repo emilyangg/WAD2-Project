@@ -126,7 +126,7 @@ function display_carpark_list() {
   </div> 
   `;      
   var final_html_str = html_str_1 + carpark_list + html_str_2; 
-  document.getElementById("carpark_list").innerHTML = final_html_str; 
+  document.getElementById("carpark_list").innerHTML = final_html_str;
   document.getElementById("home").innerHTML = "";
   document.getElementById("carpark_info").innerHTML = "";
   document.getElementById("route_list").innerHTML = "";
