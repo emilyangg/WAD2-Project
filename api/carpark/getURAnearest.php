@@ -45,13 +45,14 @@ $avails_json =  call_ura_api($URA_CP);
 $avails_arr = $avails_json['Result'];
 
 //dummy values start
-$min_e = 29923.271 - 1000;
-$max_e = 29923.271 + 1000;
-$min_n = 30853.218 - 1000;
-$max_n = 30853.218 + 1000;
+
 //dummy values end
 
-function clean_avails($avails_arr,$minEasting,$maxEasting,$minNorthing,$maxNorthing) {
+function clean_avails($avails_arr,$in_e,$in_n,$range) {
+    $min_e = $in_e - $range;
+    $max_e = $in_e + $range;
+    $min_n = $in_n - $range;
+    $max_n = $in_n + $range;
 
     $out_assoc_arr = [];
 
@@ -72,7 +73,7 @@ function clean_avails($avails_arr,$minEasting,$maxEasting,$minNorthing,$maxNorth
                 // echo($this_n);
                 // echo '<br>';
                 
-                if ($this_e >= $minEasting and $this_e <= $maxEasting and $this_n >= $minNorthing and $this_n <= $maxNorthing) {
+                if ($this_e >= $min_e and $this_e <= $max_e and $this_n >= $min_n and $this_n <= $max_n) {
                     $this_cp_num = $avails_arr[$i]['carparkNo'];
                     $this_lot_avails = $avails_arr[$i]['lotsAvailable'];
 
@@ -86,7 +87,7 @@ function clean_avails($avails_arr,$minEasting,$maxEasting,$minNorthing,$maxNorth
 }
 
 
-$clean_cpno = clean_avails($avails_arr,$min_e,$max_e,$min_n,$max_n);
+$clean_cpno = clean_avails($avails_arr,29923.271,30853.218,1000);
 
 var_dump($clean_cpno);
 
