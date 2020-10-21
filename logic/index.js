@@ -8,30 +8,30 @@ function initMap() {
 	var mapDiv = document.getElementById("map");
 	var latitude = 1.296568;
 	var longitude = 103.852119;
-  	var LatLng = new google.maps.LatLng(latitude, longitude);
+	var LatLng = new google.maps.LatLng(latitude, longitude);
 	var mapOptions = {
-		zoom: 15
-		, center: LatLng
-		, mapTypeId: google.maps.MapTypeId.ROADMAP
+		zoom: 15,
+		center: LatLng,
+		mapTypeId: google.maps.MapTypeId.ROADMAP
 	}
 	map = new google.maps.Map(mapDiv, mapOptions);
 }
 
 function getGeoLocation() {
 	if (navigator.geolocation) {
-    	navigator.geolocation.getCurrentPosition(function (pos) {
-			lat = pos.coords.latitude;
-			lng = pos.coords.longitude;
-			html_str = `${lat},${lng}`;
-			document.getElementById("startpoint").value = html_str;
-      	});
-  	}
-  else {
-      alert("Geolocation is not enabled.");
-  }
+			navigator.geolocation.getCurrentPosition(function (pos) {
+				lat = pos.coords.latitude;
+				lng = pos.coords.longitude;
+				html_str = `${lat},${lng}`;
+				document.getElementById("startpoint").value = html_str;
+			});
+		}
+	else {
+		alert("Geolocation is not enabled.");
+	}
 }
 
-//get long/latitude from address
+// get long/latitude from address
 function convert_geocode(address) {
 	var processed_address = "";
 	var ch_arr = [" ", '"', "<", ">", "#", "%", "|", "'"];
@@ -61,57 +61,40 @@ function convert_geocode(address) {
 			center = results[0].geometry.location;
         }
     }
-	var url = `
-	https://maps.googleapis.com/maps/api/geocode/json?address=${processed_address}&key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM
-	`;
+	var url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + processed_address + "&key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM";
     request.open("GET", url, false);
 	request.send();
 	return center;
 }
 
 function display_home() {
-  var html_str = `
-  <div data-role="header">
-  </div>
+	var html_str = `
+		<div data-role="header">
+		</div>
 
+		<div data-role="content">
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" placeholder="Traveling to..." id="endpoint">
+				<button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
+					Enter
+				</button>
+			</div>
+		</div> 
 
-  <div data-role="content">
+		<div data-role="footer">
+			<div class="btn-group mb-3" style="display: flex">
+				<div class="col">
+					<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved">Saved Trips</button>
+				</div>
+			</div>
+		</div>
+	`;
 
-    <div class="input-group mb-3">
-
-      <input type="text" class="form-control" placeholder="Traveling to..." id="endpoint">
-      
-      <button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
-        Enter
-      </button>
-    
-    </div>
-      
-  </div> 
-
-  
-  <div data-role="footer">
-
-    <div class="btn-group mb-3" style="display: flex">
-      
-      <div class="col">
-        <button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_carpark_list">Locate Carparks</button>
-      </div>
-
-      <div class="col">
-        <button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved">Saved Trips</button>
-      </div>
-
-    </div>
-
-  </div>`;
-
-
-  document.getElementById("home").innerHTML = html_str;
-  document.getElementById("carpark_list").innerHTML = "";
-  document.getElementById("carpark_info").innerHTML = "";
-  document.getElementById("route_list").innerHTML = "";
-  document.getElementById("route_info").innerHTML = "";
+	document.getElementById("home").innerHTML = html_str;
+	document.getElementById("carpark_list").innerHTML = "";
+	document.getElementById("carpark_info").innerHTML = "";
+	document.getElementById("route_list").innerHTML = "";
+	document.getElementById("route_info").innerHTML = "";
 }
 
 function display_map_home() {
@@ -126,45 +109,53 @@ function display_map_home() {
         , map: map
         , title: ""
 	});
-	// console.log(map.center);
-	//   console.log(map);
+	call_carpark_api(latitude, longitude);
 }
 
-function display_carpark_list() {
-  document.getElementById("")
-  var html_str_1 = `
-  <div data-role="header">
-  <!-- Carparks near destination -->
-  </div>
+function call_carpark_api(lat, lng) {
+	var request = new XMLHttpRequest();
 
-
-  <div data-role="content">
-    <!-- List of carparks -->
-    <div class="list-group">
-  `;
-
-  var carpark_list =''
-
-  for (var carpark of apicarparks) {
-    carpark_list += `<a href="#" class="list-group-item list-group-item-action" onclick(display_carpark_info(${carpark}))>${carpark}</a>`
-  }
-
-  var html_str_2 =`
-    </div>
-  </div> 
-  
-  <div data-role="footer">
-    <!-- Nothing? -->
-  </div> 
-  `;
-
-  var final_html_str = html_str_1 + carpark_list + html_str_2; 
-  document.getElementById("carpark_list").innerHTML = final_html_str; 
-  document.getElementById("home").innerHTML = "";
-  document.getElementById("carpark_info").innerHTML = "";
-  document.getElementById("route_list").innerHTML = "";
-  document.getElementById("route_info").innerHTML = "";
+	request.onreadystatechange = function() {
+		if (this.readyState == 4 && this.status == 200) {
+			var response = JSON.parse(this.responseText);
+			display_carpark_list(response);
+		}
+	}
+	var url = "api/carpark/read.php?lat=" + lat + "&lng=" + lng;
+	request.open("GET", url, false);
+	request.send();
 }
+
+function display_carpark_list(carpark_obj) {
+	var carpark_list = `
+		<ul class="list-group">
+	`;
+
+	for (carpark in carpark_obj) {
+		// carpark_list += `<a href="#" class="list-group-item list-group-item-action" onclick(display_carpark_info(${carpark}))>${carpark}</a>`;
+		var LatLng = new google.maps.LatLng(carpark_obj[carpark].latitude, carpark_obj[carpark].longitude);
+		var marker = new google.maps.Marker({
+			position: LatLng
+			, map: map
+			, title: carpark_obj[carpark].Address
+		});
+		carpark_list += `
+				<li class="list-group-item">
+					<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
+					<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
+				</li>
+		`;
+	}
+
+	carpark_list += `
+		</ul>
+	`;
+	document.getElementById("carpark_list").innerHTML = carpark_list; 
+	document.getElementById("carpark_info").innerHTML = "";
+	document.getElementById("route_list").innerHTML = "";
+	document.getElementById("route_info").innerHTML = "";
+}
+
 
 function display_carpark_info(carpark) {
   var carpark_name = object.carpark_name;
