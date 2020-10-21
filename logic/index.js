@@ -11,7 +11,7 @@ function getGeoLocation() {
       alert("Geolocation is not enabled.");
   }
 }
-
+ 
 //convert address to lat/longitude
 function convert_geocode(address) {
   var processed_address = "";
