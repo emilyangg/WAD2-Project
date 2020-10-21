@@ -3,80 +3,64 @@
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// include database and object files
-include_once '../config/database.php';
-include_once '../objects/carpark.php';
+// include_once '../api/carpark/hdb.php';
+include_once '../api/carpark/ura.php';
 
-// instantiate database and product object
-$database = new Database();
-$db = $database->getConnection();
+// $carpark_availability = call_ura_api("carpark availability");
+$carpark_details = call_ura_api("carpark details");
 
-// initialize object
-$carpark = new Carpark($db);
+// products array
+// $carpark_details_arr = json_decode(json_encode($carpark_details), true);
+$result_arr = array();
+$result_arr["records"] = array();
+echo gettype($carpark_details);
+var_dump($carpark_details);
 
-// query products
-$stmt = $carpark->read();
-$num = $stmt->rowCount();
+// foreach( $carpark_details_arr as $arr) {
+//     $items = [];
+//     foreach($arr as $key => $value) {
+//         $items[$key] = $value;
+//     }
+//     // extract row
+//     // this will make $row['name'] to
+//     // just $name only
+//     // extract($row);
 
-// check if more than 0 record found
-if($num > 0) {
+//     // $item = array(
+//     //     "_id" => $id,
+//     //     "address" => $address,
+//     //     "car_park_no" => $car_park_no,
+//     //     "coordinates" => [
+//     //         "y_coord" => $y_coord,
+//     //         "x_coord" => $x_coord
+//     //     ],
+//     //     "parking_info" => [
+//     //         "short_term_parking" => $short_term_parking,
+//     //         "free_parking" => $free_parking,
+//     //         "night_parking" => $night_parking,
+//     //         "type_of_parking_system" => $type_of_parking_system
+//     //     ],
+//     //     "carpark_info" => [
+//     //         "car_park_type" => $car_park_type,
+//     //         "gantry_height" => $gantry_height,
+//     //         "car_park_basement" => $car_park_basement,
+//     //         "car_park_decks" => $car_park_decks
+//     //     ]
+//     // );
 
-    // products array
-    $result_arr = array();
-    $result_arr["records"] = array();
+//     array_push($result_arr["records"], $item);
+// }
 
-    while( $row = $stmt->fetch(PDO::FETCH_ASSOC) ) {
-        // extract row
-        // this will make $row['name'] to
-        // just $name only
-        extract($row);
+// // // Add info node (1 per response)
+// // $date = new DateTime(null, new DateTimeZone('Asia/Singapore'));
+// // $result_arr["info"] = array(
+// //     "author" => "Team",
+// //     "response_datetime_singapore" => $date->format('Y-m-d H:i:sP')
+// // );
 
-        $item = array(
-            "_id" => $id,
-            "address" => $address,
-            "car_park_no" => $car_park_no,
-            "coordinates" => [
-                "y_coord" => $y_coord,
-                "x_coord" => $x_coord
-            ],
-            "parking_info" => [
-                "short_term_parking" => $short_term_parking,
-                "free_parking" => $free_parking,
-                "night_parking" => $night_parking,
-                "type_of_parking_system" => $type_of_parking_system
-            ],
-            "carpark_info" => [
-                "car_park_type" => $car_park_type,
-                "gantry_height" => $gantry_height,
-                "car_park_basement" => $car_park_basement,
-                "car_park_decks" => $car_park_decks
-            ]
-        );
+// // // // set response code - 200 OK
+// // // http_response_code(200);
 
-        array_push($result_arr["records"], $item);
-    }
-
-    // Add info node (1 per response)
-    $date = new DateTime(null, new DateTimeZone('Asia/Singapore'));
-    $result_arr["info"] = array(
-        "author" => "Team",
-        "response_datetime_singapore" => $date->format('Y-m-d H:i:sP')
-    );
-
-    // set response code - 200 OK
-    http_response_code(200);
-
-    // show products data in json format
-    echo json_encode($result_arr);
-}
-else {
-  
-    // set response code - 404 Not found
-    http_response_code(404);
-  
-    // tell the user no items found
-    echo json_encode(
-        array("message" => "No items found.")
-    );
-}
+// // // show products data in json format
+// // var_dump($result_arr);
 ?>
