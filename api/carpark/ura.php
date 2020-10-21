@@ -45,13 +45,13 @@ function call_ura_api($type) {
     // (deletes the variable made by curl_init)
     curl_close($curl);
 
-    $out_assoc = json_decode($output);
+    $out_assoc = json_decode($output, true);
     
-    return $output;
+    return $out_assoc;
 
 }
 
 // echo call_ura_api("carpark availability");
-echo call_ura_api("carpark details");
+// echo call_ura_api("carpark details");
 
 ?>

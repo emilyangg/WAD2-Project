@@ -35,11 +35,22 @@ function call_api($url) {
 
 }
 
-// Call Google Map Nearby Carpark Places API
+// Google Map Nearby Carpark Places API
+// Carpark Name, Address, Latitude and Longitude 
+// eg. SMU Carpark, 50 Stamford Road, Lee Kong Chien School of Business, lat : 1.2953273 & lng : 103.8506022
+
+// Input destination latitude and longitude 
 $lat = "1.296568";
 $long = "103.852119";
 $coordinates = $lat . "," . $long;
 
-$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=". $coordinates . "&type=parking&key=AIzaSyDozDyfjIbBGMu-vpZfs2eDBUN8cnyUGyQ&rankby=distance";
-echo call_api($url);
+// Specify URL
+$gmNearby = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=". $coordinates . "&type=parking&key=AIzaSyDozDyfjIbBGMu-vpZfs2eDBUN8cnyUGyQ&rankby=distance";
+
+// Call Google Map Nearby Carpark Places API
+$gmNearby_response = call_api($gmNearby);
+
+// Display Google Map Nearby Carpark Places
+echo $gmNearby_response;
+
 ?>
