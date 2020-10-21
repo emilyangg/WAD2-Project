@@ -1,68 +1,79 @@
+var map;
+
+function initMap() {
+	// map = new google.maps.Map(document.getElementById("map"), {
+	// 	center: { lat: 1.296568, lng: 103.852119 },
+	// 	zoom: 15,
+	// });
+	var mapDiv = document.getElementById("map");
+	var latitude = 1.296568;
+	var longitude = 103.852119;
+  	var LatLng = new google.maps.LatLng(latitude, longitude);
+	var mapOptions = {
+		zoom: 15
+		, center: LatLng
+		, mapTypeId: google.maps.MapTypeId.ROADMAP
+	}
+	map = new google.maps.Map(mapDiv, mapOptions);
+}
+
 function getGeoLocation() {
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function (pos) {
-          lat = pos.coords.latitude;
-          lng = pos.coords.longitude;
-          html_str = `${lat},${lng}`;
-          document.getElementById("startpoint").value = html_str;
-      });
-  }
+	if (navigator.geolocation) {
+    	navigator.geolocation.getCurrentPosition(function (pos) {
+			lat = pos.coords.latitude;
+			lng = pos.coords.longitude;
+			html_str = `${lat},${lng}`;
+			document.getElementById("startpoint").value = html_str;
+      	});
+  	}
   else {
       alert("Geolocation is not enabled.");
   }
 }
- 
-//convert address to lat/longitude
-function convert_geocode(address) {
-  var processed_address = "";
-  // var url_encode = {
-  //    :"%20";
-  //   '"': "%22";
 
-  // }
-  // for (ch of address) {
-  //   for 
-  // }
-  var request = new XMLHttpRequest();
+//get long/latitude from address
+function convert_geocode(address) {
+	var processed_address = "";
+	var ch_arr = [" ", '"', "<", ">", "#", "%", "|", "'"];
+	var replace_arr = ["%20", "%22", "%3C", "%3E", "%23", "%25", "%7C", "%27"];
+	var center = {};
+	for (ch of address) {
+		var should_encode = true;
+    	for (i = 0; i < ch_arr.length; i++) {
+      		if (ch == ch_arr[i]) {
+				processed_address += replace_arr[i];
+				should_encode = false;
+      		}
+		}
+		if (should_encode == true) {
+			processed_address += ch;
+		}
+
+	}
+
+	var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if( request.readyState == 4 && request.status == 200 ) {
-            console.log(request.responseText);
+            //console.log(request.responseText);
             var json_obj = JSON.parse(request.responseText);
-            var records = json_obj.records;
-            initialise_dropdown(records);
-            initialise_cards(records);
+			var results = json_obj.results;
+			// console.log(results);
+			center = results[0].geometry.location;
         }
     }
-    var url = `
-    https://maps.googleapis.com/maps/api/geocode/json?address=${processed_address}&key=YOUR_API_KEY
-    `;
-    request.open("GET", url, true);
-    request.send();
+	var url = `
+	https://maps.googleapis.com/maps/api/geocode/json?address=${processed_address}&key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM
+	`;
+    request.open("GET", url, false);
+	request.send();
+	return center;
 }
 
 function display_home() {
   var html_str = `
   <div data-role="header">
-
-    <div class="input-group mb-3">
-
-      <input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
-    
-      <button type="button" class="btn btn-info" style="width=100%;">
-        Search
-      </button>    
-    
-    </div>
-    
-    <div class="btn-group mb-3" style="display: flex">
-      
-      <div class="col">
-        <button type="button" class="btn btn-block btn-primary" style="margin: 5px, display: inline" onclick="getGeoLocation()">Use Current Location</button>
-      </div>
-
-    </div>
-
   </div>
+
 
   <div data-role="content">
 
@@ -70,20 +81,21 @@ function display_home() {
 
       <input type="text" class="form-control" placeholder="Traveling to..." id="endpoint">
       
-      <button type="button" class="btn btn-info" style="width=100%;">
-        Search
+      <button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
+        Enter
       </button>
     
     </div>
       
   </div> 
+
   
   <div data-role="footer">
 
     <div class="btn-group mb-3" style="display: flex">
       
       <div class="col">
-        <button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_carpark_list">Generate Route</button>
+        <button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_carpark_list">Locate Carparks</button>
       </div>
 
       <div class="col">
@@ -93,6 +105,8 @@ function display_home() {
     </div>
 
   </div>`;
+
+
   document.getElementById("home").innerHTML = html_str;
   document.getElementById("carpark_list").innerHTML = "";
   document.getElementById("carpark_info").innerHTML = "";
@@ -100,11 +114,29 @@ function display_home() {
   document.getElementById("route_info").innerHTML = "";
 }
 
+function display_map_home() {
+  	var address = document.getElementById("endpoint").value;
+	var destination = convert_geocode(address);
+	var latitude = destination["lat"];
+	var longitude = destination["lng"];
+	var LatLng = new google.maps.LatLng(latitude, longitude);
+	map.setCenter(LatLng);
+	var marker = new google.maps.Marker({
+        position: LatLng
+        , map: map
+        , title: ""
+	});
+	// console.log(map.center);
+	//   console.log(map);
+}
+
 function display_carpark_list() {
+  document.getElementById("")
   var html_str_1 = `
   <div data-role="header">
   <!-- Carparks near destination -->
   </div>
+
 
   <div data-role="content">
     <!-- List of carparks -->
@@ -124,9 +156,10 @@ function display_carpark_list() {
   <div data-role="footer">
     <!-- Nothing? -->
   </div> 
-  `;      
+  `;
+
   var final_html_str = html_str_1 + carpark_list + html_str_2; 
-  document.getElementById("carpark_list").innerHTML = final_html_str;
+  document.getElementById("carpark_list").innerHTML = final_html_str; 
   document.getElementById("home").innerHTML = "";
   document.getElementById("carpark_info").innerHTML = "";
   document.getElementById("route_list").innerHTML = "";
@@ -146,17 +179,24 @@ function display_carpark_info(carpark) {
     <!-- Carpark Info-->
   </div>
 
+
   <div data-role="content">
+
     <h1>${carpark_name}</h1>
     <span>Distance from Destination: ${distance}</span>
     <span>Number of available lots: ${avail_lots}
+
   </div> 
   
+
   <div data-role="footer">
+  
     <!--Button to select this carpark, go to routes -->
     <button type="button" class="btn btn-primary" onclick="display_route_list(${carpark_coord})">Select</button>
+
   </div>
   `;
+
   document.getElementById("carpark_info").innerHTML = html_str;
   document.getElementById("home").innerHTML = "";
   document.getElementById("carpark_list").innerHTML = ""; 
@@ -165,14 +205,33 @@ function display_carpark_info(carpark) {
 }
 
 function display_route_list(startpoint, carpark_coord) {
+  var html_str = `
+  <div class="input-group mb-3">
+
+    <input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
+  
+    <button type="button" class="btn btn-info" style="width=100%;">
+      Enter
+    </button>    
+  
+  </div>
+
+    
+  <div class="btn-group mb-3" style="display: flex">
+    
+    <div class="col">
+      <button type="button" class="btn btn-block btn-primary" style="margin: 5px, display: inline" onclick="getGeoLocation()">Use Current Location</button>
+    </div>
+
+  </div>
+  `;
+
   var request = new XMLHttpRequest();
     request.onreadystatechange = function() {
         if( request.readyState == 4 && request.status == 200 ) {
             console.log(request.responseText);
             var json_obj = JSON.parse(request.responseText);
             var records = json_obj.records;
-            initialise_dropdown(records);
-            initialise_cards(records);
         }
     }
     var url = `
@@ -182,6 +241,14 @@ function display_route_list(startpoint, carpark_coord) {
     &key=YOUR_API_KEY`;
     request.open("GET", url, true);
     request.send();
+}
+
+function update_map_display(url) {
+  const base_url = `
+  https://www.google.com/maps/embed/v1/place
+  ?key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM
+  `;
+  document.getElementById("map_embed").src = "url"
 }
 
 function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
