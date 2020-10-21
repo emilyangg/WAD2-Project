@@ -12,29 +12,6 @@ var_dump($EastNorth);
 $easting = $EastNorth['X'];
 $northing = $EastNorth['Y'];
 
-// Get range for lat and long
-$minEasting = $easting - 100;
-$maxEasting = $easting + 100;
-$minNorthing = $northing - 100;
-$maxNorthing = $northing + 100;
-
-// Get Associative Array of nearby CP and its details (CP_no => [carpark details])
-
-
-// -----------------------------------------------------
-// Return Associative Array with CP that  Initiate nearby carpark number arr
-$nearby_CP_No_arr = [];
-
-// Store CP (that have Eastings and Northings within the range) and carpark type "C" 
-$cpEast = "123";
-$cpNorth = "456";
-
-if ($cpEast >= $minEasting and $cpEast <= $maxEasting and $cpNorth >= $minNorthing and $cpEast <= $maxNorthing) {
-    array_push($nearby_CP_No_arr, $carparkNo);
-}
-
-//--------------------------------------------------------------
-
 // Call URA CP to get:
 // Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20, lot type: C
 // $URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
@@ -43,10 +20,6 @@ if ($cpEast >= $minEasting and $cpEast <= $maxEasting and $cpNorth >= $minNorthi
 $URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
 $avails_json =  call_ura_api($URA_CP);
 $avails_arr = $avails_json['Result'];
-
-//dummy values start
-
-//dummy values end
 
 function clean_avails($avails_arr,$in_e,$in_n,$range) {
     $min_e = $in_e - $range;
@@ -87,7 +60,7 @@ function clean_avails($avails_arr,$in_e,$in_n,$range) {
 }
 
 
-$clean_cpno = clean_avails($avails_arr,29923.271,30853.218,1000);
+$clean_cpno = clean_avails($avails_arr,$easting,$northing,1000);
 
 var_dump($clean_cpno);
 
