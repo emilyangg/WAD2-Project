@@ -1,6 +1,4 @@
 <?php
-require_once './ura.php';
-require_once './xyToSvy21.php';
 require_once 'getURAnearest.php';
 
 // $ura_details is a json, details_arr is an array of all the results
