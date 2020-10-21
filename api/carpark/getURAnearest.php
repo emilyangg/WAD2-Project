@@ -1,6 +1,6 @@
 <?php
-include './ura.php';
-include './xyToSvy21.php';
+// include './ura.php';
+// include './xyToSvy21.php';
 
 // Returns nearby carparks and their details
 function nearbyCP($avails_arr,$in_e,$in_n,$range) {
@@ -41,25 +41,26 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
     return $out_assoc_arr;
 }
 
+// Testing
 // Given Lat and Long (SMU LKCSB)
-$lat = "1.2953";
-$long = "103.8506";
+// $lat = "1.2953";
+// $long = "103.8506";
 
-// Convert Lat and Long to SVY21 format
-$EastNorth = convert_xy_to_svy21($lat, $long);
-var_dump($EastNorth);
-$easting = $EastNorth['X'];
-$northing = $EastNorth['Y'];
+// // Convert Lat and Long to SVY21 format
+// $EastNorth = convert_xy_to_svy21($lat, $long);
+// var_dump($EastNorth);
+// $easting = $EastNorth['X'];
+// $northing = $EastNorth['Y'];
 
-// Call URA CP to get:
-// Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20, lot type: C
-$URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
-$avails_json =  call_ura_api($URA_CP);
-$avails_arr = $avails_json['Result'];
+// // Call URA CP to get:
+// // Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20, lot type: C
+// $URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
+// $avails_json =  call_ura_api($URA_CP);
+// $avails_arr = $avails_json['Result'];
 
-$clean_cpno = nearbyCP($avails_arr,$easting,$northing,1000);
+// $clean_cpno = nearbyCP($avails_arr,$easting,$northing,1000);
 
-var_dump($clean_cpno);
+// var_dump($clean_cpno);
 
 
 // Call URA CP information to get:
