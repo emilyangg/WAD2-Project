@@ -30,6 +30,8 @@ function getNearestURACP($lat, $long){
 
     // Associative array of nearby carparks and their details (coordinates, lots availability + ADDRESS and RATES)
     $nearbyCPAndDetails = nearbyCPDetails($clean_cpno, $details_arr);
+
+    return $nearbyCPAndDetails;
 }
 
 // Returns NEARBY Carpark No and their Easting, Northing and Lot Availabilities
@@ -89,8 +91,8 @@ function nearbyCPDetails($clean_cpno, $details_arr){
             $this_wkday_rates = $details_arr[$i]['weekdayRate'];
             $this_sat_rates = $details_arr[$i]['satdayRate'];
             $this_sun_rates = $details_arr[$i]['sunPHRate'];
-            $this_easting = $clean_cpno[$this_cpNo][0];
-            $this_northing = $clean_cpno[$this_cpNo][1];
+            $this_latitude = $clean_cpno[$this_cpNo][0];
+            $this_longitude = $clean_cpno[$this_cpNo][1];
             $this_lot_avail = $clean_cpno[$this_cpNo][2];
     
 
@@ -107,13 +109,14 @@ function nearbyCPDetails($clean_cpno, $details_arr){
         }
     }
 
-    var_dump($out_assoc_arr) ;
+    return $out_assoc_arr;
 }
 
-// Given Lat and Long (SMU LKCSB)
+// Dummy Lat and Long (SMU LKCSB)
 $lat = "1.2953";
 $long = "103.8506";
-getNearestURACP($lat, $long);
+$results = getNearestURACP($lat, $long);
+var_dump($results);
 
 
 ?>
