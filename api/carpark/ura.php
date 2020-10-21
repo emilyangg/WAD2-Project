@@ -1,12 +1,8 @@
 <?php
 
 // create & initialize a curl session
-function call_ura_api($type) {
-    if ($type == "carpark availability") {
-      $url = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
-    } else if ($type == "carpark details") {
-      $url = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details";
-    }
+function call_ura_api($url) {
+
     $curl = curl_init();
   
     
@@ -46,14 +42,14 @@ function call_ura_api($type) {
     curl_close($curl);
 
     $out_assoc = json_decode($output, true);
-    echo $output; 
-    // var_dump($out_assoc);
+    // echo $output; 
+    var_dump($out_assoc);
     
     return $out_assoc;
 
 }
 
 // echo call_ura_api("carpark availability");
-// call_ura_api("carpark details");
+call_ura_api("https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability");
 
 ?>
