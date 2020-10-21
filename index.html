@@ -9,15 +9,25 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
     <!-- Link to some JS file that is needed for google maps -->
-    <!--<script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>-->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
     <!-- Link to google maps JS for their dynamic map -->
-    <!--<script defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM&callback=initMap&libraries=&v=weekly">
-    </script>--> 
-    
+    <script defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM&libraries=geometry,places&callback=initMap">
+    </script>
+
     <!-- Custom JavaScript -->
     <script src="logic/index.js"></script>
+
+    <style>
+        #map {
+          height: 100%;
+        }
+        html, body {
+          height: 100%;
+          margin: 0;
+          padding: 0;
+        }
+      </style>
 
     <title>App Title</title>
 </head>
@@ -83,15 +93,7 @@
         <div class="col-sm-8">
             
             <div id="map" style="height:100%">
-                <!-- Google Maps embed -->
-                <iframe
-                width=100%
-                height=100%
-                frameborder="0" 
-                style="border:0;"
-                src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA8VsAlF9qO4eWgdZ85_EZxwZSYD2folMM&q=SMU,Singapore"
-                allowfullscreen>
-                </iframe>
+                
             </div>
 
         </div>
