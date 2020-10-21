@@ -1,5 +1,7 @@
 <?php
 
+// Source: https://github.com/heack/SVY21_php_convert_GPS
+
 $c = new SVY21_Convertor(); 
 $coordinate = $c->onemap_compute(31962.0601,27582.895); // Northing, Easting [second data, first data]
 var_dump($coordinate);
