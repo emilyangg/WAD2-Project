@@ -1,11 +1,12 @@
 <?php
- echo 1;
+
 // create & initialize a curl session
-function call_carpark_availability_api($url1) {
+function call_api($url) {
+
     $curl = curl_init();
     
     // set our url with curl_setopt()
-    curl_setopt($curl, CURLOPT_URL, $url1);
+    curl_setopt($curl, CURLOPT_URL,$url);
     
     // Set cURL Headers
     curl_setopt($curl, CURLOPT_HTTPHEADER, array(
@@ -23,29 +24,22 @@ function call_carpark_availability_api($url1) {
     // curl_exec() executes the started curl session
     // $output contains the output string
     $output = curl_exec($curl);
-    
 
     // close curl resource to free up system resources
     // (deletes the variable made by curl_init)
     curl_close($curl);
-    
-    // Display in array data type
-    $out_assoc = json_decode($output, true);
-    
-    var_dump($out_assoc['Result'][8]);
-    // var_dump($out_assoc['Result'][1]);
-    // var_dump($out_assoc['Result'][2]);
-    // var_dump($out_assoc['Result'][3]);
-    // var_dump($out_assoc['Result'][4]);
-    // var_dump($out_assoc['Result'][5]);
-    // var_dump($out_assoc['Result'][6]);
 
-    echo $out_assoc['Result'][0]['carparkNo'];
-    
+    // Convert from JSON to associative array
+    $out_assoc = json_decode($output, true);
     return $output;
+
 }
 
-$url1 = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
-call_carpark_availability_api($url1);
+// Call Google Map Nearby Carpark Places API
+$lat = "1.296568";
+$long = "103.852119";
+$coordinates = $lat . "," . $long;
 
+$url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=". $coordinates . "&type=parking&key=AIzaSyDozDyfjIbBGMu-vpZfs2eDBUN8cnyUGyQ&rankby=distance";
+echo call_api($url);
 ?>
