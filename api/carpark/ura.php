@@ -8,7 +8,7 @@ function call_ura_api($type) {
       $url = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details";
     }
     $curl = curl_init();
-    
+  
     
     // set our url with curl_setopt()
     curl_setopt($curl, CURLOPT_URL,$url );
@@ -46,12 +46,14 @@ function call_ura_api($type) {
     curl_close($curl);
 
     $out_assoc = json_decode($output, true);
+    echo $output; 
+    // var_dump($out_assoc);
     
     return $out_assoc;
 
 }
 
 // echo call_ura_api("carpark availability");
-// echo call_ura_api("carpark details");
+// call_ura_api("carpark details");
 
 ?>

@@ -4,7 +4,8 @@ header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
 // include_once '../api/carpark/hdb.php';
-include_once '../api/carpark/ura.php';
+// include_once '../api/carpark/ura.php';
+include_once './ura.php';
 
 // $carpark_availability = call_ura_api("carpark availability");
 $carpark_details = call_ura_api("carpark details");
