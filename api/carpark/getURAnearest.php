@@ -2,26 +2,8 @@
 include './ura.php';
 include './xyToSvy21.php';
 
-// Given Lat and Long (SMU LKCSB)
-$lat = "1.2953";
-$long = "103.8506";
-
-// Convert Lat and Long to SVY21 format
-$EastNorth = convert_xy_to_svy21($lat, $long);
-var_dump($EastNorth);
-$easting = $EastNorth['X'];
-$northing = $EastNorth['Y'];
-
-// Call URA CP to get:
-// Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20, lot type: C
-// $URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
-// call_ura_api($URA_CP);
-
-$URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
-$avails_json =  call_ura_api($URA_CP);
-$avails_arr = $avails_json['Result'];
-
-function clean_avails($avails_arr,$in_e,$in_n,$range) {
+// Returns nearby carparks and their details
+function nearbyCP($avails_arr,$in_e,$in_n,$range) {
     $min_e = $in_e - $range;
     $max_e = $in_e + $range;
     $min_n = $in_n - $range;
@@ -59,8 +41,23 @@ function clean_avails($avails_arr,$in_e,$in_n,$range) {
     return $out_assoc_arr;
 }
 
+// Given Lat and Long (SMU LKCSB)
+$lat = "1.2953";
+$long = "103.8506";
 
-$clean_cpno = clean_avails($avails_arr,$easting,$northing,1000);
+// Convert Lat and Long to SVY21 format
+$EastNorth = convert_xy_to_svy21($lat, $long);
+var_dump($EastNorth);
+$easting = $EastNorth['X'];
+$northing = $EastNorth['Y'];
+
+// Call URA CP to get:
+// Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20, lot type: C
+$URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
+$avails_json =  call_ura_api($URA_CP);
+$avails_arr = $avails_json['Result'];
+
+$clean_cpno = nearbyCP($avails_arr,$easting,$northing,1000);
 
 var_dump($clean_cpno);
 
