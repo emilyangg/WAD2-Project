@@ -1,5 +1,5 @@
 <?php
-require_once 'ura_details_clean.php';
+require_once 'ura.php';
 
 $url_details = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details";
 $ura_details = call_ura_api($url_details);
