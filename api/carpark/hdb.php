@@ -41,17 +41,17 @@ function callAPI($method, $url, $data){
 // HDB Information
 // Carpark Number, x and y coordinates (E and N), address, free parking 
 // eg. BR21, 34387.1259 & 30595.5166, Blk 41 Jalan Bahagia, SUN & PH FR 7AM-10.30PM
-$hbd_information = callAPI('GET', 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c', false);
-$hbd_information_response = json_decode($hbd_information, true);
+// $hbd_information = callAPI('GET', 'https://data.gov.sg/api/action/datastore_search?resource_id=139a3035-e624-4f56-b63f-89ae28d4ae4c', false);
+// $hbd_information_response = json_decode($hbd_information, true);
 
 // HDB Carpark Availability
 // Carpark Number, Total Lots, Lot Type, Lots Availability 
 // eg. HE12, 91, C, 0
-$hdb_cp_avail = callAPI('GET', 'https://api.data.gov.sg/v1/transport/carpark-availability', false);
-$hbd_cp_avail_response = json_decode($hdb_cp_avail, true);
+// $hdb_cp_avail = callAPI('GET', 'https://api.data.gov.sg/v1/transport/carpark-availability', false);
+// $hbd_cp_avail_response = json_decode($hdb_cp_avail, true);
 
 // Display HDB Information & HDB Carpark Availability
-echo $hbd_information;
-echo $hdb_cp_avail;
+// echo $hbd_information;
+// echo $hdb_cp_avail;
 
 ?>

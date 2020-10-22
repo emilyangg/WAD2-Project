@@ -1,10 +1,13 @@
 <?php
+// This page:
+// Receives lat and long
+// Return nearest HDB carparks' cpNo, lat, long and other details
 
 // Include URA API Calling, Coordinates Converter and Functions 
 include './ura.php';
 include './xyToSvy21.php';
 
-// Input: Lat and Long of destination; Output: An array of Nearby Carpark No and their details
+// Parent Function - Input: Lat and Long of destination; Output: An array of Nearby Carpark No and their details
 function getNearestURACP($lat, $long){
     // Convert Lat and Long to SVY21 format
     $EastNorth = convert_xy_to_svy21($lat, $long);

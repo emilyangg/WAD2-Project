@@ -1,5 +1,6 @@
 <?php
 require_once 'getURAnearest.php';
+require_once 'getHDBnearest.php';
 
 $lat = isset($_GET["lat"]) ? $_GET["lat"] : "";
 $lng = isset($_GET["lng"]) ? $_GET["lng"] : "";
