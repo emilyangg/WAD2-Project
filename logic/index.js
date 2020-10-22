@@ -1,4 +1,5 @@
 var map;
+var markers = [];
 
 function initMap() {
 	// map = new google.maps.Map(document.getElementById("map"), {
@@ -98,6 +99,10 @@ function display_home() {
 }
 
 function display_map_home() {
+	if(markers.length > 0) {
+		clearMarkers();
+	}
+
   	var address = document.getElementById("endpoint").value;
 	var destination = convert_geocode(address);
 	var latitude = destination["lat"];
@@ -109,6 +114,7 @@ function display_map_home() {
         , map: map
         , title: ""
 	});
+	markers.push(marker);
 	call_carpark_api(latitude, longitude);
 }
 
@@ -130,29 +136,41 @@ function display_carpark_list(carpark_obj) {
 	var carpark_list = `
 		<ul class="list-group">
 	`;
-
+	var contentString = "";
 	for (carpark in carpark_obj) {
 		// carpark_list += `<a href="#" class="list-group-item list-group-item-action" onclick(display_carpark_info(${carpark}))>${carpark}</a>`;
 		var LatLng = new google.maps.LatLng(carpark_obj[carpark].Latitude, carpark_obj[carpark].Longitude);
-		var contentString = `
-			<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
-			<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
-		`;
-		var infowindow = new google.maps.InfoWindow({
-			content: contentString,
-		});
+		
+		// var infowindow = new google.maps.InfoWindow({
+		// 	content: contentString,
+		// });
 		var marker = new google.maps.Marker({
 			position: LatLng,
 			map: map,
 			label: "P",
 			title: carpark_obj[carpark].Address
 		});
-		marker.addListener("click", () => {
-			infowindow.open(map, marker);
-		});
+
+		var infowindow = new google.maps.InfoWindow();  
+		google.maps.event.addListener(marker, 'click', (function(marker) {  
+				return function() {
+					var contentString = `
+						<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
+						<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
+					`;    
+					infowindow.setContent(contentString);  
+					infowindow.open(map, marker);  
+				}  
+		})(marker));
+		
+		markers.push(marker);
+		 
+		// marker.addListener("click", () => {
+		// 	infowindow.open(map, marker);
+		// });
 		
 		carpark_list += `
-				<li class="list-group-item">
+				<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
 					<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
 					<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
 					<p>Weekday rates: ${carpark_obj[carpark].WeekdayRates}</p>
@@ -171,6 +189,83 @@ function display_carpark_list(carpark_obj) {
 	document.getElementById("route_info").innerHTML = "";
 }
 
+function clearMarkers() {
+    for (var i = 0; i < markers.length; i++) {
+        markers[i].setMap(null);
+    }
+    markers = [];
+}
+
+function prepare_generate_route(endpoint) {
+	document.getElementById("endpoint").value = endpoint;
+	document.getElementById("startpoint_input").innerHTML = `
+		<div class="input-group mb-3">
+			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
+			<button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
+				Enter
+			</button>
+		</div>	
+	`;
+	document.getElementById("generate_route").innerHTML = `
+		<div class="btn-group mb-3" style="display: flex">
+			<div class="col">
+				<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="generate_route()">Generate Route</button>
+			</div>
+		</div>
+	`;
+
+	document.getElementById("carpark_list").innerHTML = ""; 
+}
+
+function generate_route() {
+	var startLocation = document.getElementById("startpoint").value;
+	var startPoint = convert_geocode(startLocation);
+	var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
+
+	var endLocation = document.getElementById("endpoint").value;
+	var endPoint = convert_geocode(endLocation);
+	var end_LatLng = new google.maps.LatLng(endPoint["lat"], endPoint["lng"]);
+
+	var directionsService = new google.maps.DirectionsService();
+	var directionsRenderer = new google.maps.DirectionsRenderer();
+	directionsRenderer.setMap(map);
+	map.setCenter(start_LatLng);
+
+	clearMarkers();
+	// var markerA = new google.maps.Marker({
+	// 	position: start_LatLng,
+	// 	map: map,
+	// 	label: "A",
+	// 	title: "Traveling from..."
+	// });
+	
+	// var markerB = new google.maps.Marker({
+	// 	position: end_LatLng,
+	// 	map: map,
+	// 	label: "B",
+	// 	title: "Traveling to..."
+	// });
+	// markers.push(markerA);
+	// markers.push(markerB);
+
+	calculateAndDisplayRoute(directionsService, directionsRenderer, start_LatLng, end_LatLng);
+	// console.log(markers);
+}
+
+function calculateAndDisplayRoute(directionsService, directionsRenderer, pointA, pointB) {
+    directionsService.route({
+		origin: pointA,
+		destination: pointB,
+		travelMode: google.maps.TravelMode.DRIVING
+    }, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsRenderer.setDirections(response);
+        }
+        else {
+            window.alert('Directions request failed due to ' + status);
+        }
+    });
+}
 
 function display_carpark_info(carpark) {
   var carpark_name = object.carpark_name;
