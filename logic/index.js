@@ -133,16 +133,31 @@ function display_carpark_list(carpark_obj) {
 
 	for (carpark in carpark_obj) {
 		// carpark_list += `<a href="#" class="list-group-item list-group-item-action" onclick(display_carpark_info(${carpark}))>${carpark}</a>`;
-		var LatLng = new google.maps.LatLng(carpark_obj[carpark].latitude, carpark_obj[carpark].longitude);
-		var marker = new google.maps.Marker({
-			position: LatLng
-			, map: map
-			, title: carpark_obj[carpark].Address
+		var LatLng = new google.maps.LatLng(carpark_obj[carpark].Latitude, carpark_obj[carpark].Longitude);
+		var contentString = `
+			<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
+			<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
+		`;
+		var infowindow = new google.maps.InfoWindow({
+			content: contentString,
 		});
+		var marker = new google.maps.Marker({
+			position: LatLng,
+			map: map,
+			label: "P",
+			title: carpark_obj[carpark].Address
+		});
+		marker.addListener("click", () => {
+			infowindow.open(map, marker);
+		});
+		
 		carpark_list += `
 				<li class="list-group-item">
 					<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
 					<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
+					<p>Weekday rates: ${carpark_obj[carpark].WeekdayRates}</p>
+					<p>Saturday rates: ${carpark_obj[carpark].SatRates}</p>
+					<p>Sunday/Public holiday rates: ${carpark_obj[carpark]["Sun/PHRates"]}</p>
 				</li>
 		`;
 	}
