@@ -8,12 +8,12 @@ include './hdb.php';
 include './xyToSvy21.php';
 
 // Marine Parade
-$lat = 1.3033;
-$long = 103.9140;
+// $lat = 1.3033;
+// $long = 103.9140;
 
 // // SMU
-// $lat = 1.2953;
-// $long = 103.8506;
+$lat = 1.2953;
+$long = 103.8506;
 
 // Parent Function - Input: Lat and Long of destination; Output: An array of Nearby Carpark No and their details
 function getNearestHDBCP($lat, $long){
