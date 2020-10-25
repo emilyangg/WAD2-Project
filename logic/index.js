@@ -124,12 +124,33 @@ function call_carpark_api(lat, lng) {
 	request.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = JSON.parse(this.responseText);
-			display_carpark_list(response);
+			console.log(response);
+			// display_carpark_list(response);
+			display_HDB_carpark(response.HDB);
 		}
 	}
 	var url = "api/carpark/read.php?lat=" + lat + "&lng=" + lng;
 	request.open("GET", url, false);
 	request.send();
+}
+
+function display_HDB_carpark(carpark_obj) {
+	var carpark_list = `
+		<ul class="list-group">
+	`;
+	for (carpark in carpark_obj) {
+		carpark_list += `
+				<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
+					<p class="font-weight-bold">${carpark_obj[carpark]["Address"]}</p>
+					<p>Free parking: ${carpark_obj[carpark]["Free Parking"]}</p>
+					<p>Lots available: ${carpark_obj[carpark]["Lots Available"]}</p>
+				</li>
+		`;
+	}
+	carpark_list += `
+		</ul>
+	`;
+	document.getElementById("carpark_list").innerHTML = carpark_list; 
 }
 
 function display_carpark_list(carpark_obj) {

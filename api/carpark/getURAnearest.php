@@ -5,7 +5,7 @@
 
 // Include URA API Calling, Coordinates Converter and Functions 
 include './ura.php';
-include './xyToSvy21.php';
+include_once './xyToSvy21.php';
 
 // Parent Function - Input: Lat and Long of destination; Output: An array of Nearby Carpark No and their details
 function getNearestURACP($lat, $long){
@@ -32,7 +32,7 @@ function getNearestURACP($lat, $long){
     $details_arr = $URA_details['Result'];
 
     // Associative array of nearby carparks and their details (coordinates, lots availability + ADDRESS and RATES)
-    $nearbyCPAndDetails = nearbyCPDetails($clean_cpno, $details_arr);
+    $nearbyCPAndDetails = nearbyURACPDetails($clean_cpno, $details_arr);
 
     return $nearbyCPAndDetails;
 }
@@ -80,7 +80,7 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
 }
 
 // Returns NEARBY Carpark No and their Easting, Northing and Lot Availabilities + Address and Rates
-function nearbyCPDetails($clean_cpno, $details_arr){
+function nearbyURACPDetails($clean_cpno, $details_arr){
     $out_assoc_arr = [];
 
     for ($i=0;$i<count($details_arr);$i++) {

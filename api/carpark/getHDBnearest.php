@@ -5,15 +5,15 @@
 
 // Include HDB API Calling, Coordinates Converter and Functions 
 include './hdb.php';
-include './xyToSvy21.php';
+include_once './xyToSvy21.php';
 
 // Marine Parade
 // $lat = 1.3033;
 // $long = 103.9140;
 
-// // SMU
-$lat = 1.2953;
-$long = 103.8506;
+// SMU
+// $lat = 1.2953;
+// $long = 103.8506;
 
 // Parent Function - Input: Lat and Long of destination; Output: An array of Nearby Carpark No and their details
 function getNearestHDBCP($lat, $long){
@@ -39,7 +39,7 @@ function getNearestHDBCP($lat, $long){
     $HDBLotsArr = $HDBLots['items'][0]['carpark_data'];
 
     // Get nearby carpark details FROM HDB Information API with INPUT's COORDINATES and RANGE
-    $nearbyCPArr = nearbyCPDetails($HDBInfoArr,$easting,$northing,1000);
+    $nearbyCPArr = nearbyHDBCPDetails($HDBInfoArr,$easting,$northing,1000);
 
     // Add available carpark lots FROM HDB Carpark Availability API to nearby carpark details
     $nearbyCPWithLots = addCPLots($nearbyCPArr, $HDBLotsArr);
@@ -48,7 +48,7 @@ function getNearestHDBCP($lat, $long){
 }
 
 // Returns NEARBY Carpark No and its address, latitude, longitude, free parking timings, short term parking and night parking
-function nearbyCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
+function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
     $minEasting = $inEasting - $range;
     $maxEasting = $inEasting + $range;
     $minNorthing = $inNorthing - $range;
@@ -100,8 +100,7 @@ function addCPLots($nearbyCPArr, $HDBAvailArr){
     return $nearbyCPArr;
 }
 
-$nearbyHDBCP = getNearestHDBCP($lat, $long);
-var_dump($nearbyHDBCP);
-
+// $nearbyHDBCP = getNearestHDBCP($lat, $long);
+// var_dump($nearbyHDBCP);
 
 ?>

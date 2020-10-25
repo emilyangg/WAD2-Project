@@ -1,10 +1,16 @@
 <?php
 require_once 'getURAnearest.php';
-// require_once 'getHDBnearest.php';
+require_once 'getHDBnearest.php';
 
+// // SMU
+// $lat = 1.2953;
+// $lng = 103.8506;
 $lat = isset($_GET["lat"]) ? $_GET["lat"] : "";
 $lng = isset($_GET["lng"]) ? $_GET["lng"] : "";
-$results = getNearestURACP($lat, $lng);
+// $ura = getNearestURACP($lat, $lng);
+$results = [];
+$results["HDB"] = getNearestHDBCP($lat, $lng);
+// $results = array_merge($ura, $hdb);
 // var_dump($results);
 
 if (count($results) > 0) {
@@ -24,8 +30,8 @@ else {
     );
 }
 
-// required headers
-// header("Access-Control-Allow-Origin: *");
-// header("Content-Type: application/json; charset=UTF-8");
+// // required headers
+// // header("Access-Control-Allow-Origin: *");
+// // header("Content-Type: application/json; charset=UTF-8");
 
 ?>
