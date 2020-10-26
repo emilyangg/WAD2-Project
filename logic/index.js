@@ -1,6 +1,7 @@
 var map;
 var markers = [];
 
+// Embed map
 function initMap() {
 	// map = new google.maps.Map(document.getElementById("map"), {
 	// 	center: { lat: 1.296568, lng: 103.852119 },
@@ -18,21 +19,7 @@ function initMap() {
 	map = new google.maps.Map(mapDiv, mapOptions);
 }
 
-function getGeoLocation() {
-	if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function (pos) {
-				lat = pos.coords.latitude;
-				lng = pos.coords.longitude;
-				html_str = `${lat},${lng}`;
-				document.getElementById("startpoint").value = html_str;
-			});
-		}
-	else {
-		alert("Geolocation is not enabled.");
-	}
-}
-
-// get long/latitude from address
+// Get latitude and longitude from address
 function convert_geocode(address) {
 	var processed_address = "";
 	var ch_arr = [" ", '"', "<", ">", "#", "%", "|", "'"];
@@ -68,36 +55,6 @@ function convert_geocode(address) {
 	return center;
 }
 
-function display_home() {
-	var html_str = `
-		<div data-role="header">
-		</div>
-
-		<div data-role="content">
-			<div class="input-group mb-3">
-				<input type="text" class="form-control" placeholder="Traveling to..." id="endpoint">
-				<button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
-					Enter
-				</button>
-			</div>
-		</div> 
-
-		<div data-role="footer">
-			<div class="btn-group mb-3" style="display: flex">
-				<div class="col">
-					<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved">Saved Trips</button>
-				</div>
-			</div>
-		</div>
-	`;
-
-	document.getElementById("home").innerHTML = html_str;
-	document.getElementById("carpark_list").innerHTML = "";
-	document.getElementById("carpark_info").innerHTML = "";
-	document.getElementById("route_list").innerHTML = "";
-	document.getElementById("route_info").innerHTML = "";
-}
-
 function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();
@@ -110,9 +67,9 @@ function display_map_home() {
 	var LatLng = new google.maps.LatLng(latitude, longitude);
 	map.setCenter(LatLng);
 	var marker = new google.maps.Marker({
-        position: LatLng
-        , map: map
-        , title: ""
+		position: LatLng, 
+		map: map,
+		title: ""
 	});
 	markers.push(marker);
 	call_carpark_api(latitude, longitude);
@@ -125,8 +82,7 @@ function call_carpark_api(lat, lng) {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = JSON.parse(this.responseText);
 			console.log(response);
-			// display_carpark_list(response);
-			display_HDB_carpark(response.HDB);
+			display_carpark_list(response, lat, lng);
 		}
 	}
 	var url = "api/carpark/read.php?lat=" + lat + "&lng=" + lng;
@@ -134,72 +90,53 @@ function call_carpark_api(lat, lng) {
 	request.send();
 }
 
-function display_HDB_carpark(carpark_obj) {
-	var carpark_list = `
-		<ul class="list-group">
-	`;
+function display_URA_carpark(carpark_obj, lat, lng) {
+	var carpark_list = ``;
 	for (carpark in carpark_obj) {
+		var carpark_lat = carpark_obj[carpark]["Latitude"];
+		var carpark_lng = carpark_obj[carpark]["Longitude"];
+		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
 		carpark_list += `
-				<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
-					<p class="font-weight-bold">${carpark_obj[carpark]["Address"]}</p>
-					<p>Free parking: ${carpark_obj[carpark]["Free Parking"]}</p>
-					<p>Lots available: ${carpark_obj[carpark]["Lots Available"]}</p>
-				</li>
+			<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
+				<span class="font-weight-bold">${carpark_obj[carpark].Address}</span><br>
+				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
+				<span>Lots available: ${carpark_obj[carpark].LotAvail}</span><br>
+				<span>Weekday rates: ${carpark_obj[carpark].WeekdayRates}</span><br>
+				<span>Saturday rates: ${carpark_obj[carpark].SatRates}</span><br>
+				<span>Sunday/Public holiday rates: ${carpark_obj[carpark]["Sun/PHRates"]}</span><br>
+			</li>
 		`;
+		display_markers(carpark_lat, carpark_lng);
 	}
-	carpark_list += `
-		</ul>
-	`;
-	document.getElementById("carpark_list").innerHTML = carpark_list; 
+	return carpark_list
 }
 
-function display_carpark_list(carpark_obj) {
+function display_HDB_carpark(carpark_obj, lat, lng) {
+	var carpark_list = ``;
+	for (carpark in carpark_obj) {
+		var carpark_lat = carpark_obj[carpark]["Latitude"];
+		var carpark_lng = carpark_obj[carpark]["Longitude"];
+		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
+		carpark_list += `
+				<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
+					<span class="font-weight-bold">${carpark_obj[carpark]["Address"]}</span><br>	
+					<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
+					<span>Number of available lots: ${carpark_obj[carpark]["Lots Available"]}</span><br>
+					<span>Free parking: ${carpark_obj[carpark]["Free Parking"]}</span><br>
+				</li>
+		`;
+		display_markers(carpark_lat, carpark_lng);
+	}
+	return carpark_list
+}
+
+function display_carpark_list(carpark_obj, lat, lng) {
 	var carpark_list = `
 		<ul class="list-group">
 	`;
-	var contentString = "";
-	for (carpark in carpark_obj) {
-		// carpark_list += `<a href="#" class="list-group-item list-group-item-action" onclick(display_carpark_info(${carpark}))>${carpark}</a>`;
-		var LatLng = new google.maps.LatLng(carpark_obj[carpark].Latitude, carpark_obj[carpark].Longitude);
-		
-		// var infowindow = new google.maps.InfoWindow({
-		// 	content: contentString,
-		// });
-		var marker = new google.maps.Marker({
-			position: LatLng,
-			map: map,
-			label: "P",
-			title: carpark_obj[carpark].Address
-		});
-
-		var infowindow = new google.maps.InfoWindow();  
-		google.maps.event.addListener(marker, 'click', (function(marker) {  
-				return function() {
-					var contentString = `
-						<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
-						<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
-					`;    
-					infowindow.setContent(contentString);  
-					infowindow.open(map, marker);  
-				}  
-		})(marker));
-		
-		markers.push(marker);
-		 
-		// marker.addListener("click", () => {
-		// 	infowindow.open(map, marker);
-		// });
-		
-		carpark_list += `
-				<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
-					<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
-					<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
-					<p>Weekday rates: ${carpark_obj[carpark].WeekdayRates}</p>
-					<p>Saturday rates: ${carpark_obj[carpark].SatRates}</p>
-					<p>Sunday/Public holiday rates: ${carpark_obj[carpark]["Sun/PHRates"]}</p>
-				</li>
-		`;
-	}
+	
+	carpark_list += display_URA_carpark(carpark_obj["URA"], lat, lng);
+	carpark_list += display_HDB_carpark(carpark_obj["HDB"], lat, lng);
 
 	carpark_list += `
 		</ul>
@@ -208,6 +145,49 @@ function display_carpark_list(carpark_obj) {
 	document.getElementById("carpark_info").innerHTML = "";
 	document.getElementById("route_list").innerHTML = "";
 	document.getElementById("route_info").innerHTML = "";
+}
+
+function calculateDistance(lat1, lon1, lat2, lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2 - lat1) // Javascript functions in radians
+    var dLon = deg2rad(lon2 - lon1);
+	var a = 
+		Math.sin(dLat / 2) * Math.sin(dLat / 2) + 
+		Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+		Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    var d = R * c; // Distance in km
+    return d;
+}
+
+function deg2rad(deg) {
+	return deg * (Math.PI/180)
+  }
+
+function display_markers(lat, lng) {
+	var LatLng = new google.maps.LatLng(lat, lng);
+	var marker = new google.maps.Marker({
+		position: LatLng,
+		map: map,
+		title: "Carpark",
+		icon: {                             
+			url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
+		}
+	});
+
+	// var infowindow = new google.maps.InfoWindow();  
+	// google.maps.event.addListener(marker, 'click', (function(marker) {  
+	// 		return function() {
+	// 			var contentString = `
+	// 				<p class="font-weight-bold">${carpark_obj[carpark].Address}</p>
+	// 				<p>Lots available: ${carpark_obj[carpark].LotAvail}</p>
+	// 			`;    
+	// 			infowindow.setContent(contentString);  
+	// 			infowindow.open(map, marker);  
+	// 		}  
+	// })(marker));
+	
+	markers.push(marker);
 }
 
 function clearMarkers() {
@@ -253,27 +233,11 @@ function generate_route() {
 	map.setCenter(start_LatLng);
 
 	clearMarkers();
-	// var markerA = new google.maps.Marker({
-	// 	position: start_LatLng,
-	// 	map: map,
-	// 	label: "A",
-	// 	title: "Traveling from..."
-	// });
-	
-	// var markerB = new google.maps.Marker({
-	// 	position: end_LatLng,
-	// 	map: map,
-	// 	label: "B",
-	// 	title: "Traveling to..."
-	// });
-	// markers.push(markerA);
-	// markers.push(markerB);
 
-	calculateAndDisplayRoute(directionsService, directionsRenderer, start_LatLng, end_LatLng);
-	// console.log(markers);
+	displayRoute(directionsService, directionsRenderer, start_LatLng, end_LatLng);
 }
 
-function calculateAndDisplayRoute(directionsService, directionsRenderer, pointA, pointB) {
+function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
     directionsService.route({
 		origin: pointA,
 		destination: pointB,
@@ -373,17 +337,16 @@ function update_map_display(url) {
   document.getElementById("map_embed").src = "url"
 }
 
-function calculateAndDisplayRoute(directionsService, directionsDisplay, pointA, pointB) {
-  directionsService.route({
-      origin: pointA
-      , destination: pointB
-      , travelMode: google.maps.TravelMode.DRIVING
-  }, function (response, status) {
-      if (status == google.maps.DirectionsStatus.OK) {
-          directionsDisplay.setDirections(response);
-      }
-      else {
-          window.alert('Directions request failed due to ' + status);
-      }
-  });
+function getGeoLocation() {
+	if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(function (pos) {
+				lat = pos.coords.latitude;
+				lng = pos.coords.longitude;
+				html_str = `${lat},${lng}`;
+				document.getElementById("startpoint").value = html_str;
+			});
+		}
+	else {
+		alert("Geolocation is not enabled.");
+	}
 }

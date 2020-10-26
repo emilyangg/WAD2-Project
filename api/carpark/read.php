@@ -7,10 +7,9 @@ require_once 'getHDBnearest.php';
 // $lng = 103.8506;
 $lat = isset($_GET["lat"]) ? $_GET["lat"] : "";
 $lng = isset($_GET["lng"]) ? $_GET["lng"] : "";
-// $ura = getNearestURACP($lat, $lng);
 $results = [];
 $results["HDB"] = getNearestHDBCP($lat, $lng);
-// $results = array_merge($ura, $hdb);
+$results["URA"] =  getNearestURACP($lat, $lng);
 // var_dump($results);
 
 if (count($results) > 0) {
