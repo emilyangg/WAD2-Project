@@ -68,7 +68,7 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
             $thisNParking = $HDBInfoArr[$i]['night_parking'];
 
             // Convert EN to Lat and Long
-            $thisLatLong = convert_svy21_to_xy($thisNorthing, $thisNorthing);
+            $thisLatLong = convert_svy21_to_xy($thisEasting, $thisNorthing);
             $thisLat = $thisLatLong['latitude'];
             $thisLong = $thisLatLong['longitude'];
 
