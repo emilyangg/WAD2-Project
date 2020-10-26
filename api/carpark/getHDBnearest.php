@@ -54,6 +54,8 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
     $minNorthing = $inNorthing - $range;
     $maxNorthing = $inNorthing + $range;
 
+    $centralCP = ["ACB", "BBB", "BRB1", "CY", "DUXM", "HLM", "KAB", "KAM", "KAS", "PRM", "SLS", "SR1", "SR2", "TPM", "UCS", "WCB"];
+
     $outAssocArr = [];
     for ($i=0;$i<count($HDBInfoArr);$i++){
         $thisEasting = $HDBInfoArr[$i]['x_coord'];
@@ -66,6 +68,10 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
             $thisFreeParking = $HDBInfoArr[$i]['free_parking'];
             $thisSTParking = $HDBInfoArr[$i]['short_term_parking'];
             $thisNParking = $HDBInfoArr[$i]['night_parking'];
+            $thisRate = "$0.60";
+            if (in_array($thisCpNo, $centralCP)){
+                $thisRate = "$1.20";
+            }
 
             // Convert EN to Lat and Long
             $thisLatLong = convert_svy21_to_xy($thisEasting, $thisNorthing);
@@ -78,7 +84,8 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
                 "Longitude" => $thisLong, 
                 "Free Parking" => $thisFreeParking, 
                 "Short Term Parking" => $thisSTParking, 
-                "Night Parking" => $thisNParking
+                "Night Parking" => $thisNParking,
+                "Rates" => $thisRate
             ];
 
         }
