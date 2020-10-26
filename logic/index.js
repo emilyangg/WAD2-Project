@@ -101,9 +101,7 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 				<span class="font-weight-bold">${carpark_obj[carpark].Address}</span><br>
 				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
 				<span>Lots available: ${carpark_obj[carpark].LotAvail}</span><br>
-				<span>Weekday rates: ${carpark_obj[carpark].WeekdayRates}</span><br>
-				<span>Saturday rates: ${carpark_obj[carpark].SatRates}</span><br>
-				<span>Sunday/Public holiday rates: ${carpark_obj[carpark]["Sun/PHRates"]}</span><br>
+				<span>Rates: ${carpark_obj[carpark].WeekdayRates}</span><br>
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng);
@@ -122,7 +120,7 @@ function display_HDB_carpark(carpark_obj, lat, lng) {
 					<span class="font-weight-bold">${carpark_obj[carpark]["Address"]}</span><br>	
 					<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
 					<span>Number of available lots: ${carpark_obj[carpark]["Lots Available"]}</span><br>
-					<span>Free parking: ${carpark_obj[carpark]["Free Parking"]}</span><br>
+					<span>Rates: ${carpark_obj[carpark]["Rates"]}</span><br>
 				</li>
 		`;
 		display_markers(carpark_lat, carpark_lng);
