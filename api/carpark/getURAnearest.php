@@ -22,7 +22,7 @@ function getNearestURACP($lat, $long){
     $avails_arr = $avails_json['Result'];
 
     // Associative array of nearby carparks and their details (coordinates and lots availability)
-    $clean_cpno = nearbyCP($avails_arr,$easting,$northing,1000);
+    $clean_cpno_avails = nearbyCP($avails_arr,$easting,$northing,1000);
 
 
     // Call URA CP information to get:
@@ -32,7 +32,7 @@ function getNearestURACP($lat, $long){
     $details_arr = $URA_details['Result'];
 
     // Associative array of nearby carparks and their details (coordinates, lots availability + ADDRESS and RATES)
-    $nearbyCPAndDetails = nearbyURACPDetails($clean_cpno, $details_arr);
+    $nearbyCPAndDetails = nearbyURACPDetails($clean_cpno_avails, $details_arr);
 
     return $nearbyCPAndDetails;
 }
@@ -72,7 +72,7 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
                     $this_lat = $this_EN['latitude'];
                     $this_long = $this_EN['longitude'];
 
-                    $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long)
+                    $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
 
                     $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails,$this_rel_dist_km];
                 }
@@ -80,7 +80,7 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
             // echo '<br>';
         }
     }
-    
+
     return $out_assoc_arr;
 }
 
@@ -102,6 +102,7 @@ function nearbyURACPDetails($clean_cpno, $details_arr){
             $this_latitude = $clean_cpno[$this_cpNo][0];
             $this_longitude = $clean_cpno[$this_cpNo][1];
             $this_lot_avail = $clean_cpno[$this_cpNo][2];
+            $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
     
 
             $out_assoc_arr[$this_cpNo] = [
@@ -111,7 +112,8 @@ function nearbyURACPDetails($clean_cpno, $details_arr){
                 "Sun/PHRates" => $this_sun_rates,
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
-                "LotAvail" => $this_lot_avail
+                "LotAvail" => $this_lot_avail,
+                "DistToDest" => $this_dist_to_dest
             ];
             // echo '<br>';
         }
