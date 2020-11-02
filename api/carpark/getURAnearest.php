@@ -32,7 +32,7 @@ function getNearestURACP($lat, $long){
     $details_arr = $URA_details['Result'];
 
     // Associative array of nearby carparks and their details (coordinates, lots availability + ADDRESS and RATES)
-    $nearbyCPAndDetails = nearbyURACPDetails($clean_cpno_avails, $details_arr);
+    $nearbyCPAndDetails = LinkAvailAndDetails($clean_cpno_avails, $details_arr);
 
     return $nearbyCPAndDetails;
 }
@@ -85,7 +85,7 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
 }
 
 // Returns NEARBY Carpark No and their Easting, Northing and Lot Availabilities + Address and Rates
-function nearbyURACPDetails($clean_cpno, $details_arr){
+function LinkAvailAndDetails($clean_cpno, $details_arr){
     $out_assoc_arr = [];
 
     for ($i=0;$i<count($details_arr);$i++) {
