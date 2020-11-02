@@ -47,9 +47,9 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
     $out_assoc_arr = [];
 
     // added 02 nov
-    // $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
-    // $destin_lat = $destin_latlon['latitude'];
-    // $destin_lon = $destin_latlon['longitude'];
+    $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
+    $destin_lat = $destin_latlon['latitude'];
+    $destin_lon = $destin_latlon['longitude'];
 
     for ($i=3;$i<count($avails_arr);$i++) {
         $this_lot_type =  $avails_arr[$i]['lotType'];
@@ -73,7 +73,7 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
                     $this_lat = $this_EN['latitude'];
                     $this_long = $this_EN['longitude'];
 
-                    // $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
+                    $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
 
                     $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails];
                 }
@@ -103,7 +103,7 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
             $this_latitude = $clean_cpno[$this_cpNo][0];
             $this_longitude = $clean_cpno[$this_cpNo][1];
             $this_lot_avail = $clean_cpno[$this_cpNo][2];
-            //$this_dist_to_dest = $clean_cpno[$this_cpNo][3];
+            $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
     
 
             $out_assoc_arr[$this_cpNo] = [
@@ -114,7 +114,7 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
                 "LotAvail" => $this_lot_avail
-                //"DistToDest" => $this_dist_to_dest
+                "DistToDest" => $this_dist_to_dest
             ];
             // echo '<br>';
         }
