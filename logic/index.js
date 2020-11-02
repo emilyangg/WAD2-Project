@@ -197,6 +197,7 @@ function clearMarkers() {
 
 function prepare_generate_route(endpoint) {
 	document.getElementById("endpoint").value = endpoint;
+	
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
@@ -205,6 +206,7 @@ function prepare_generate_route(endpoint) {
 			</button>
 		</div>	
 	`;
+	getGeoLocation();
 	document.getElementById("generate_route").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
