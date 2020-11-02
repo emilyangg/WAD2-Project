@@ -65,7 +65,6 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
                 $this_n = $this_en_list[1];
                 
                 if ($this_e >= $min_e and $this_e <= $max_e and $this_n >= $min_n and $this_n <= $max_n) {
-                    $rel_distance = 
                     $this_cp_num = $avails_arr[$i]['carparkNo'];
                     $this_lot_avails = $avails_arr[$i]['lotsAvailable'];
                     $this_EN = convert_svy21_to_xy($this_e, $this_n);
