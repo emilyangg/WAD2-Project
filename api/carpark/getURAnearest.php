@@ -113,7 +113,7 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
                 "Sun/PHRates" => $this_sun_rates,
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
-                "LotAvail" => $this_lot_avail,
+                "LotAvail" => $this_lot_avail
                 //"DistToDest" => $this_dist_to_dest
             ];
             // echo '<br>';
