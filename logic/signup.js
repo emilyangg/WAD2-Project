@@ -34,21 +34,8 @@ function check_for_authentication() {
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
                 var username = snapshot.val().username;
                 document.getElementById("navbar").innerHTML += `
-                    <i class="fas fa-user"></i> ${username}
-                `
-                console.log("BOO");
+                    <i class="fas fa-user"></i> ${username}`;
             });
         }
     });
-    // var user = firebase.auth().currentUser;
-    // if (user) {
-    //     var userId = user.uid;
-    //     firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
-    //         var username = snapshot.val().username;
-    //         document.getElementById("navbar").innerHTML += `
-    //             <i class="fas fa-user"></i> ${username}
-    //         `;
-    //         console.log("BOO");
-    //     });
-    // }
 }
