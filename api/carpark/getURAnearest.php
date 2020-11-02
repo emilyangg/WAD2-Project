@@ -46,6 +46,10 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
 
     $out_assoc_arr = [];
 
+    $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
+    $destin_lat = $destin_latlon['latitude'];
+    $destin_lon = $destin_latlon['longitude'];
+
     for ($i=3;$i<count($avails_arr);$i++) {
         $this_lot_type =  $avails_arr[$i]['lotType'];
 
@@ -55,27 +59,28 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
             // echo('<br>');
             if (array_key_exists('geometries' ,$avails_arr[$i])) {
                 $this_coords_str = $avails_arr[$i]['geometries'][0]['coordinates'];
+
                 $this_en_list = explode(",", $this_coords_str);
                 $this_e = $this_en_list[0];
-                // echo $this_e;
                 $this_n = $this_en_list[1];
-                // echo ('  ');
-                // echo($this_n);
-                // echo '<br>';
                 
                 if ($this_e >= $min_e and $this_e <= $max_e and $this_n >= $min_n and $this_n <= $max_n) {
+                    $rel_distance = 
                     $this_cp_num = $avails_arr[$i]['carparkNo'];
                     $this_lot_avails = $avails_arr[$i]['lotsAvailable'];
                     $this_EN = convert_svy21_to_xy($this_e, $this_n);
                     $this_lat = $this_EN['latitude'];
                     $this_long = $this_EN['longitude'];
 
-                    $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails];
+                    $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long)
+
+                    $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails,$this_rel_dist_km];
                 }
             }
             // echo '<br>';
         }
     }
+    
     return $out_assoc_arr;
 }
 
@@ -114,5 +119,22 @@ function nearbyURACPDetails($clean_cpno, $details_arr){
 
     return $out_assoc_arr;
 }
+
+// Converts difference in Latitude and Longitude into Kilometers
+// Source: https://www.geodatasource.com/developers/php
+function LatLonToDistance($lat1, $lon1, $lat2, $lon2) {
+    if (($lat1 == $lat2) && ($lon1 == $lon2)) {
+        return 0;
+    }
+    else {
+        $theta = $lon1 - $lon2;
+        $dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta));
+        $dist = acos($dist);
+        $dist = rad2deg($dist);
+        $miles = $dist * 60 * 1.1515;
+    
+        return ($miles * 1.609344);
+    }
+  }
 
 ?>
