@@ -46,7 +46,6 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
 
     $out_assoc_arr = [];
 
-    // added 02 nov
     $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
     $destin_lat = $destin_latlon['latitude'];
     $destin_lon = $destin_latlon['longitude'];
