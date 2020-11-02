@@ -98,11 +98,13 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
             $this_wkday_rates = $details_arr[$i]['weekdayRate'];
             $this_sat_rates = $details_arr[$i]['satdayRate'];
             $this_sun_rates = $details_arr[$i]['sunPHRate'];
+            $this_charging_interval = $details_arr[$i]['weekdayMin'];
+
             $this_latitude = $clean_cpno[$this_cpNo][0];
             $this_longitude = $clean_cpno[$this_cpNo][1];
             $this_lot_avail = $clean_cpno[$this_cpNo][2];
             $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
-    
+            
 
             $out_assoc_arr[$this_cpNo] = [
                 "Address" => $this_address, 
@@ -111,8 +113,9 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
                 "Sun/PHRates" => $this_sun_rates,
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
-                "LotAvail" => $this_lot_avail
-                "DistToDest" => $this_dist_to_dest
+                "LotAvail" => $this_lot_avail,
+                "DistToDest" => $this_dist_to_dest,
+                "ChargingInterval" => $this_charging_interval
             ];
             // echo '<br>';
         }
