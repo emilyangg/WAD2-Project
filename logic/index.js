@@ -101,7 +101,7 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 				<span class="font-weight-bold">${carpark_obj[carpark].Address}</span><br>
 				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
 				<span>Lots available: ${carpark_obj[carpark].LotAvail}</span><br>
-				<span>Rates: ${carpark_obj[carpark].WeekdayRates}</span><br>
+				<span>Rates: ${carpark_obj[carpark].WeekdayRates} per ${carpark_obj[carpark].ChargingInterval}</span><br>
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng);
