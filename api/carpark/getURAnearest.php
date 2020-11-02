@@ -9,7 +9,7 @@ include_once './xyToSvy21.php';
 
 // Parent Function - Input: Lat and Long of destination; Output: An array of Nearby Carpark No and their details
 function getNearestURACP($lat, $long){
-    // Convert Lat and Long to SVY21 format
+    //Convert Lat and Long to SVY21 format
     $EastNorth = convert_xy_to_svy21($lat, $long);
     $easting = $EastNorth['X'];
     $northing = $EastNorth['Y'];
@@ -91,7 +91,7 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
         $this_cpNo = $details_arr[$i]['ppCode'];
 
         // If lot type is Car and cpNo is nearby
-        if ($this_lot_type == 'Car' and array_key_exists($this_cpNo, $clean_cpno)) {
+        if ($this_lot_type == 'Car' && array_key_exists($this_cpNo, $clean_cpno)) {
 
             $this_address = $details_arr[$i]['ppName'];
             $this_wkday_rates = $details_arr[$i]['weekdayRate'];
@@ -114,8 +114,8 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
                 "Sun/PHRates" => $this_sun_rates,
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
-                "LotAvail" => $this_lot_avail,
-                "DistToDest" => $this_dist_to_dest
+                "LotAvail" => $this_lot_avail
+                //"DistToDest" => $this_dist_to_dest
                 // "ChargingInterval" => $this_charging_interval
             ];
             // echo '<br>';
