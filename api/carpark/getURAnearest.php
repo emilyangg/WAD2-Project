@@ -11,7 +11,6 @@ include_once './xyToSvy21.php';
 function getNearestURACP($lat, $long){
     // Convert Lat and Long to SVY21 format
     $EastNorth = convert_xy_to_svy21($lat, $long);
-    // var_dump($EastNorth);
     $easting = $EastNorth['X'];
     $northing = $EastNorth['Y'];
 
@@ -23,7 +22,6 @@ function getNearestURACP($lat, $long){
 
     // Associative array of nearby carparks and their details (coordinates and lots availability)
     $clean_cpno_avails = nearbyCP($avails_arr,$easting,$northing,1000);
-
 
     // Call URA CP information to get:
     // Carpark No: A0011, Address: ARMENIAN STREET OFF STREET, Rates: $1.20, parkCapacity: 45, startTime: 07.00 AM, endTime: 11.00 AM
@@ -51,13 +49,13 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
     // $destin_lon = $destin_latlon['longitude'];
 
     for ($i=3;$i<count($avails_arr);$i++) {
-        $this_lot_type =  $avails_arr[$i]['lotType'];
+        $this_lot_type = $avails_arr[$i]['lotType'];
 
         if ($this_lot_type == 'C') {
             // echo($i);
             // echo('this is the row number');
             // echo('<br>');
-            if (array_key_exists('geometries' ,$avails_arr[$i])) {
+            if (array_key_exists('geometries',$avails_arr[$i])) {
                 $this_coords_str = $avails_arr[$i]['geometries'][0]['coordinates'];
 
                 $this_en_list = explode(",", $this_coords_str);
