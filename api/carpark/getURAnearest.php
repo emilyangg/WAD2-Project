@@ -46,10 +46,9 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
 
     $out_assoc_arr = [];
 
-    // added 02 nov
-    // $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
-    // $destin_lat = $destin_latlon['latitude'];
-    // $destin_lon = $destin_latlon['longitude'];
+    $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
+    $destin_lat = $destin_latlon['latitude'];
+    $destin_lon = $destin_latlon['longitude'];
 
     for ($i=3;$i<count($avails_arr);$i++) {
         $this_lot_type =  $avails_arr[$i]['lotType'];
@@ -66,14 +65,13 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
                 $this_n = $this_en_list[1];
                 
                 if ($this_e >= $min_e and $this_e <= $max_e and $this_n >= $min_n and $this_n <= $max_n) {
-                    $rel_distance = 
                     $this_cp_num = $avails_arr[$i]['carparkNo'];
                     $this_lot_avails = $avails_arr[$i]['lotsAvailable'];
                     $this_EN = convert_svy21_to_xy($this_e, $this_n);
                     $this_lat = $this_EN['latitude'];
                     $this_long = $this_EN['longitude'];
 
-                    // $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
+                    $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
 
                     $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails];
                 }
@@ -100,11 +98,13 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
             $this_wkday_rates = $details_arr[$i]['weekdayRate'];
             $this_sat_rates = $details_arr[$i]['satdayRate'];
             $this_sun_rates = $details_arr[$i]['sunPHRate'];
+            $this_charging_interval = $details_arr[$i]['weekdayMin'];
+
             $this_latitude = $clean_cpno[$this_cpNo][0];
             $this_longitude = $clean_cpno[$this_cpNo][1];
             $this_lot_avail = $clean_cpno[$this_cpNo][2];
-            //$this_dist_to_dest = $clean_cpno[$this_cpNo][3];
-    
+            $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
+            
 
             $out_assoc_arr[$this_cpNo] = [
                 "Address" => $this_address, 
@@ -113,8 +113,9 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
                 "Sun/PHRates" => $this_sun_rates,
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
-                "LotAvail" => $this_lot_avail
-                //"DistToDest" => $this_dist_to_dest
+                "LotAvail" => $this_lot_avail,
+                "DistToDest" => $this_dist_to_dest,
+                "ChargingInterval" => $this_charging_interval
             ];
             // echo '<br>';
         }
