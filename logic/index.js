@@ -1,5 +1,6 @@
 var map;
 var markers = [];
+var carpark_list_counter = 0;
 
 // Embed map
 function initMap() {
@@ -73,6 +74,7 @@ function display_map_home() {
 	});
 	markers.push(marker);
 	call_carpark_api(latitude, longitude);
+	document.getElementById("endButton").innerHTML = '';
 }
 
 function call_carpark_api(lat, lng) {
@@ -93,18 +95,42 @@ function call_carpark_api(lat, lng) {
 function display_URA_carpark(carpark_obj, lat, lng) {
 	var carpark_list = ``;
 	for (carpark in carpark_obj) {
+		carpark_list_counter += 1;
 		var carpark_lat = carpark_obj[carpark]["Latitude"];
 		var carpark_lng = carpark_obj[carpark]["Longitude"];
 		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
+		var rates = carpark_obj[carpark].WeekdayRates;
+		var rates_color =  "color: ";
+		var avail_lots = carpark_obj[carpark].LotAvail;
+		var avail_lots_color = "color: ";
+		if (avail_lots < 11) {
+            avail_lots_color += "red";
+    	}
+    	else if (avail_lots < 31) {
+        	avail_lots_color += "orange";
+    	}
+    	else {
+            avail_lots_color += "green";
+		}
+		
+		if (parseFloat(rates.slice(1,rates.length)) <= 1) {
+			rates_color += "green";
+		}
+		else if (parseFloat(rates.slice(1,rates.length)) <= 2) {
+			rates_color += "orange";
+		}
+		else {
+			rates_color += "red";
+		}
 		carpark_list += `
 			<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
-				<span class="font-weight-bold">${carpark_obj[carpark].Address}</span><br>
+				<span class="font-weight-bold">${carpark_list_counter}. ${carpark_obj[carpark].Address}</span><br>
 				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
-				<span>Lots available: ${carpark_obj[carpark].LotAvail}</span><br>
-				<span>Rates: ${carpark_obj[carpark].WeekdayRates}</span><br>
+				<span style="${avail_lots_color}">Lots available: ${avail_lots}</span><br>
+				<span style="${rates_color}">Rates: ${rates} </span><br>
 			</li>
 		`;
-		display_markers(carpark_lat, carpark_lng);
+		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
 	}
 	return carpark_list
 }
@@ -112,18 +138,42 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 function display_HDB_carpark(carpark_obj, lat, lng) {
 	var carpark_list = ``;
 	for (carpark in carpark_obj) {
+		carpark_list_counter += 1;
 		var carpark_lat = carpark_obj[carpark]["Latitude"];
 		var carpark_lng = carpark_obj[carpark]["Longitude"];
 		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
+		var rates = carpark_obj[carpark]["Rates"];
+		var rates_color =  "color: ";
+		var avail_lots = carpark_obj[carpark]["Lots Available"];
+		var avail_lots_color = "color: ";
+		if (avail_lots < 11) {
+            avail_lots_color += "red";
+    	}
+    	else if (avail_lots < 31) {
+        	avail_lots_color += "orange";
+    	}
+    	else {
+            avail_lots_color += "green";
+		}
+		
+		if (parseFloat(rates.slice(1,rates.length)) <= 1) {
+			rates_color += "green";
+		}
+		else if (parseFloat(rates.slice(1,rates.length)) <= 2) {
+			rates_color += "orange";
+		}
+		else {
+			rates_color += "red";
+		}
 		carpark_list += `
 				<li class="list-group-item" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
-					<span class="font-weight-bold">${carpark_obj[carpark]["Address"]}</span><br>	
+					<span class="font-weight-bold">${carpark_list_counter}. ${carpark_obj[carpark]["Address"]}</span><br>	
 					<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
-					<span>Number of available lots: ${carpark_obj[carpark]["Lots Available"]}</span><br>
-					<span>Rates: ${carpark_obj[carpark]["Rates"]}</span><br>
+					<span style="${avail_lots_color}">Number of available lots: ${avail_lots}</span><br>
+					<span style="${rates_color}">Rates: ${rates}</span><br>
 				</li>
 		`;
-		display_markers(carpark_lat, carpark_lng);
+		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
 	}
 	return carpark_list
 }
@@ -168,6 +218,12 @@ function display_markers(lat, lng) {
 		position: LatLng,
 		map: map,
 		title: "Carpark",
+		label: {
+			color: 'black',
+			fontWeight: 'bold',
+			fontSize: '20px',
+			text: carpark_list_counter.toString()
+		},
 		icon: {                             
 			url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
 		}
@@ -200,10 +256,15 @@ function prepare_generate_route(endpoint) {
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
-			<button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
-				Enter
-			</button>
+			
 		</div>	
+	`;
+	document.getElementById("use_current_location").innerHTML = `
+		<div class="btn-group mb-3" style="display: flex">
+			<button type="button" class="btn btn-info" style="width=100%"; onclick="getGeoLocation()">
+				Use Current Location
+			</button>
+		</div>
 	`;
 	document.getElementById("generate_route").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
@@ -218,8 +279,13 @@ function prepare_generate_route(endpoint) {
 
 function generate_route() {
 	var startLocation = document.getElementById("startpoint").value;
-	var startPoint = convert_geocode(startLocation);
-	var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
+	if (Array.isArray(startLocation)){
+		var start_LatLng = new google.maps.LatLng(startLocation[0], startLocation[1]);
+	} else{
+		var startPoint = convert_geocode(startLocation);
+		var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
+	}
+	
 
 	var endLocation = document.getElementById("endpoint").value;
 	var endPoint = convert_geocode(endLocation);
@@ -251,41 +317,41 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
 }
 
 function display_carpark_info(carpark) {
-  var carpark_name = object.carpark_name;
-  var distance = object.distance; //may need to be calculated
-  var avail_lots = object.avail_lots;
-  var carpark_coord = object.carpark_coord;
-
+	var carpark_name = object.carpark_name;
+	var distance = object.distance; //may need to be calculated
+	var avail_lots = object.avail_lots;
+	var carpark_coord = object.carpark_coord;
+	
   //To be edited after data structure confirmed
 
-  var html_str = `
-  <div data-role="header">
-    <!-- Carpark Info-->
-  </div>
+	var html_str = `
+	<div data-role="header">
+	<!-- Carpark Info-->
+	</div>
 
 
-  <div data-role="content">
+	<div data-role="content">
 
-    <h1>${carpark_name}</h1>
-    <span>Distance from Destination: ${distance}</span>
-    <span>Number of available lots: ${avail_lots}
+	<h1>${carpark_name}</h1>
+		<span>Distance from Destination: ${distance}</span>
+		<span>Number of available lots: ${avail_lots}</span>
 
-  </div> 
-  
+	</div> 
 
-  <div data-role="footer">
-  
-    <!--Button to select this carpark, go to routes -->
-    <button type="button" class="btn btn-primary" onclick="display_route_list(${carpark_coord})">Select</button>
 
-  </div>
-  `;
+	<div data-role="footer">
 
-  document.getElementById("carpark_info").innerHTML = html_str;
-  document.getElementById("home").innerHTML = "";
-  document.getElementById("carpark_list").innerHTML = ""; 
-  document.getElementById("route_list").innerHTML = "";
-  document.getElementById("route_info").innerHTML = "";
+		<!--Button to select this carpark, go to routes -->
+		<button type="button" class="btn btn-primary" onclick="display_route_list(${carpark_coord})">Select</button>
+
+	</div>
+`;
+
+	document.getElementById("carpark_info").innerHTML = html_str;
+	document.getElementById("home").innerHTML = "";
+	document.getElementById("carpark_list").innerHTML = ""; 
+	document.getElementById("route_list").innerHTML = "";
+	document.getElementById("route_info").innerHTML = "";
 }
 
 function display_route_list(startpoint, carpark_coord) {
@@ -340,8 +406,9 @@ function getGeoLocation() {
 			navigator.geolocation.getCurrentPosition(function (pos) {
 				lat = pos.coords.latitude;
 				lng = pos.coords.longitude;
-				html_str = `${lat},${lng}`;
+				html_str = [lat,lng];
 				document.getElementById("startpoint").value = html_str;
+				generate_route();
 			});
 		}
 	else {
