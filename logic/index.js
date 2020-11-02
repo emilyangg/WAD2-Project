@@ -74,6 +74,7 @@ function display_map_home() {
 	});
 	markers.push(marker);
 	call_carpark_api(latitude, longitude);
+	document.getElementById("endButton").innerHTML = '';
 }
 
 function call_carpark_api(lat, lng) {
@@ -252,16 +253,19 @@ function clearMarkers() {
 
 function prepare_generate_route(endpoint) {
 	document.getElementById("endpoint").value = endpoint;
-	
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
-			<button type="button" class="btn btn-info" style="width=100%"; onclick="display_map_home()">
-				Enter
-			</button>
+			
 		</div>	
 	`;
-	getGeoLocation();
+	document.getElementById("use_current_location").innerHTML = `
+		<div class="btn-group mb-3" style="display: flex">
+			<button type="button" class="btn btn-info" style="width=100%"; onclick="getGeoLocation()">
+				Use Current Location
+			</button>
+		</div>
+	`;
 	document.getElementById("generate_route").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
@@ -275,8 +279,13 @@ function prepare_generate_route(endpoint) {
 
 function generate_route() {
 	var startLocation = document.getElementById("startpoint").value;
-	var startPoint = convert_geocode(startLocation);
-	var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
+	if (Array.isArray(startLocation)){
+		var start_LatLng = new google.maps.LatLng(startLocation[0], startLocation[1]);
+	} else{
+		var startPoint = convert_geocode(startLocation);
+		var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
+	}
+	
 
 	var endLocation = document.getElementById("endpoint").value;
 	var endPoint = convert_geocode(endLocation);
@@ -397,8 +406,9 @@ function getGeoLocation() {
 			navigator.geolocation.getCurrentPosition(function (pos) {
 				lat = pos.coords.latitude;
 				lng = pos.coords.longitude;
-				html_str = `${lat},${lng}`;
+				html_str = [lat,lng];
 				document.getElementById("startpoint").value = html_str;
+				generate_route();
 			});
 		}
 	else {
