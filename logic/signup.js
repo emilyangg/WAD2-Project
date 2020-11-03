@@ -9,7 +9,9 @@ function sign_up() {
         }
         firebase.database().ref('users/' + uid).set({
             username: name,
-            email: email
+            email: email,
+            no_of_trips: 0,
+            saved_trips: ""
         });
 
         firebase.auth().onAuthStateChanged(function (user) {

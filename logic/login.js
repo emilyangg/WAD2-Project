@@ -55,3 +55,43 @@ function login() {
         });
     }
 }
+
+function save_this_trip() {
+    var no_of_trips = 0;
+    var startLocation = document.getElementById("startpoint").value;
+	if (Array.isArray(startLocation)){
+        var start_lat = startLocation[0];
+        var start_lng = startLocation[1];
+	} else{
+        var startPoint = convert_geocode(startLocation);
+        var start_lat = startPoint["lat"];
+        var start_lng = startPoint["lng"];
+	}
+
+	var endLocation = document.getElementById("endpoint").value;
+    var endPoint = convert_geocode(endLocation);
+    var end_lat = endPoint["lat"];
+    var end_lng = endPoint["lng"];
+    
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            var userId = user.uid;
+            firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
+                no_of_trips = snapshot.val().no_of_trips + 1;
+                var updates = {};
+                updates['/users/' + userId] = no_of_trips;
+
+                firebase.database().ref().update(updates);
+            });
+            firebase.database().ref('users/' + userId + '/saved_trips/' + 'trip' + no_of_trips).set({
+                start_location: startLocation,
+                start_lat: start_lat,
+                start_lng: start_lng,
+                end_location: endLocation,
+                end_lat: end_lat,
+                end_lng: end_lng
+            });
+            
+        }
+    });
+}
