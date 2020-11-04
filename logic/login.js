@@ -57,7 +57,6 @@ function login() {
 }
 
 function save_this_trip() {
-    var no_of_trips = 0;
     var startLocation = document.getElementById("startpoint").value;
 	if (Array.isArray(startLocation)){
         var start_lat = startLocation[0];
@@ -77,21 +76,50 @@ function save_this_trip() {
         if (user) {
             var userId = user.uid;
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
-                no_of_trips = snapshot.val().no_of_trips + 1;
+                var no_of_trips = snapshot.val().no_of_trips + 1;
                 var updates = {};
-                updates['/users/' + userId] = no_of_trips;
+                updates['/users/' + userId + '/no_of_trips/'] = no_of_trips;
 
                 firebase.database().ref().update(updates);
+
+                firebase.database().ref('users/' + userId + '/saved_trips/' + 'trip' + no_of_trips).set({
+                    start_location: startLocation,
+                    start_lat: start_lat,
+                    start_lng: start_lng,
+                    end_location: endLocation,
+                    end_lat: end_lat,
+                    end_lng: end_lng
+                });
             });
-            firebase.database().ref('users/' + userId + '/saved_trips/' + 'trip' + no_of_trips).set({
-                start_location: startLocation,
-                start_lat: start_lat,
-                start_lng: start_lng,
-                end_location: endLocation,
-                end_lat: end_lat,
-                end_lng: end_lng
+            alert("Your trip has been saved!");
+        }
+    });
+}
+
+function display_saved() {
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            var saved_list = `
+                <ul class="list-group">
+            `;
+            var userId = user.uid;
+            firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
+                var saved_trips = snapshot.val().saved_trips;
+                for (trip in saved_trips) {
+                    saved_list += `
+                        <li class="list-group-item">
+                            <span class="font-weight-bold">${trip}</span><br>
+                            <span>Start Location: ${saved_trips[trip]["start_location"]}</span><br>
+                            <span>End Location: ${saved_trips[trip]["end_location"]}</span>
+                        </li>
+                        
+                    `;
+                }
+                saved_list += `
+                    </ul>
+                `;
+                document.getElementById("carpark_list").innerHTML = saved_list; 
             });
-            
         }
     });
 }

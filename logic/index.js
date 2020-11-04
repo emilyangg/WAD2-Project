@@ -275,6 +275,9 @@ function prepare_generate_route(endpoint) {
 	`;
 
 	document.getElementById("carpark_list").innerHTML = ""; 
+	document.getElementById("saved_trips_buttons").innerHTML += `
+		<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="save_this_trip()">Save this trip</button>
+	`;
 }
 
 function generate_route() {
