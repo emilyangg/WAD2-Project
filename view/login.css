@@ -3,7 +3,7 @@
     --input-padding-y: .75rem;
   }
 
-body {
+/* body {
     background: #007bff;
     background: linear-gradient(to right, #0062E6, #33AEFF);
   }
@@ -35,7 +35,7 @@ body {
     font-weight: bold;
     padding: 1rem;
     transition: all 0.2s;
-  }
+  } */
   
   .form-label-group {
     position: relative;
@@ -99,7 +99,7 @@ body {
     color: #777;
   }
   
-  .btn-google {
+  /* .btn-google {
     color: white;
     background-color: #ea4335;
   }
@@ -107,7 +107,7 @@ body {
   .btn-facebook {
     color: white;
     background-color: #3b5998;
-  }
+  } */
   
   /* Fallback for Edge
   -------------------------------------------------- */
