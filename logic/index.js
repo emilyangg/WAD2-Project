@@ -282,9 +282,12 @@ function prepare_generate_route(endpoint) {
 
 function generate_route() {
 	var startLocation = document.getElementById("startpoint").value;
-	if (Array.isArray(startLocation)){
-		var start_LatLng = new google.maps.LatLng(startLocation[0], startLocation[1]);
-	} else{
+	if (startLocation[0] == "!"){
+		startLocation = startLocation.slice(1);
+		var startPoint = convert_geocode(startLocation);
+		var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
+		document.getElementById("startpoint").value = "Current Location";
+	} else {
 		var startPoint = convert_geocode(startLocation);
 		var start_LatLng = new google.maps.LatLng(startPoint["lat"], startPoint["lng"]);
 	}
@@ -410,7 +413,7 @@ function getGeoLocation() {
 				lat = pos.coords.latitude;
 				lng = pos.coords.longitude;
 				html_str = [lat,lng];
-				document.getElementById("startpoint").value = html_str;
+				document.getElementById("startpoint").value = `!${html_str}`;
 				generate_route();
 			});
 		}
