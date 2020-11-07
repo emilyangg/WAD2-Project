@@ -3,6 +3,15 @@
     --input-padding-y: .75rem;
   }
 
+body {
+  height:100vh; 
+  background-image: url('./images/autmnCarpark1.jpg'); 
+  background-size: cover; 
+  background-repeat: no-repeat;
+  /* background-color: #fffcae; */
+}
+
+
 /* body {
     background: #007bff;
     background: linear-gradient(to right, #0062E6, #33AEFF);
@@ -133,3 +142,12 @@
       color: #777;
     }
   }
+
+  /* @media all and (max-width: 376px) {
+    body { 
+      height:100vh; 
+      background-image: url('./images/yellowcar.jpg'); 
+      background-size: 200% 100%; 
+      background-repeat: no-repeat;
+    }
+  } */
