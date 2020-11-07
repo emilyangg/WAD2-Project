@@ -4,13 +4,9 @@
   }
 
 body {
-  background-color: lightblue;
-  /* background-image: url("./images/cars.jpg"); */
+  background-image: url("./images/cars.jpg");
 }
 
-.container {
-  background-color: lightblue;
-}
 
 /* body {
     background: #007bff;
