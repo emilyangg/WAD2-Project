@@ -11,6 +11,9 @@
     <!-- Font Awesome CSS -->
     <script src="https://kit.fontawesome.com/96c80c29ff.js" crossorigin="anonymous"></script>
 
+    <!-- Google API Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&display=swap" rel="stylesheet">
+
     <!-- Link to some JS file that is needed for google maps -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
 
@@ -62,16 +65,17 @@
 
 <body onload="check_for_authentication()">
 
-    <nav class="navbar navbar-light bg-light" id="navbar">
+    <!-- <nav class="navbar navbar-light bg-light" id="navbar">
         <a class="navbar-brand" href="#">Nearby Carpark</a>
-    </nav>
+    </nav> -->
+    <div id= "logoName" style = "color:white; background-color: black; text-align: center; font-family: 'Merriweather', serif; font-size: 1.5em; padding: 1em;"> WhereToPark  <i class="fas fa-car"></i> </div>
 
     <div class="row" style="height:100vh">
 
         <!--Menu interface-->
-        <div class ="col-sm-4">
+        <div class ="col-sm-4" style="border:1px red solid">
     
-            <div class="container" id="home">
+            <div class="container mt-5" style="border:1px red solid"id="home">
                 <div id="startpoint_input">
                 </div>
 
@@ -150,7 +154,7 @@
         <!--Map-->
         <div class="col-sm-8">
             
-            <div id="map" style="height:100%">
+            <div id="map" >
                 
             </div>
 
