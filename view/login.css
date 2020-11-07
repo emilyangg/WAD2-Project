@@ -4,7 +4,10 @@
   }
 
 body {
-  background-image: url("./images/cars.jpg");
+  height:100vh; 
+  background-image: url('./view/images/oneCar.jpg'); 
+  background-size: 100% 100%; 
+  background-repeat: no-repeat;
 }
 
 
