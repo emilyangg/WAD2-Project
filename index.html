@@ -57,9 +57,38 @@
           height: 100%;
           margin: 0;
           padding: 0;
+          background-color:white;
         }
-      </style>
+        #row{
+            height:90vh;
+        }
+        @media screen and (max-width: 576px) {
+            #mapParent {
+                height: auto;
+                min-height: 50vh; 
+            }
+            #menu{
+                height: auto;
+                max-height: 45vh;
+                overflow: scroll;
+            }
+        }
+        @media screen and (min-width: 576px) {
+            #mapParent {
+                height: 100%;
+            }
+            #menu{
+                height: 100%;
+                max-height: 100%;
+                overflow: scroll;
+            }
+        }
 
+        ::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+    
     <title>App Title</title>
 </head>
 
@@ -70,12 +99,12 @@
     </nav> -->
     <div id= "logoName" style = "color:white; background-color: black; text-align: center; font-family: 'Merriweather', serif; font-size: 1.5em; padding: 1em;"> WhereToPark  <i class="fas fa-car"></i> </div>
 
-    <div class="row" style="height:100vh">
+    <div class="row" id="row">
 
         <!--Menu interface-->
-        <div class ="col-sm-4" style="border:1px red solid">
+        <div id="menu" class ="col-sm-4" >
     
-            <div class="container mt-5" style="border:1px red solid"id="home">
+            <div class="container mt-3" id="home">
                 <div id="startpoint_input">
                 </div>
 
@@ -152,7 +181,7 @@
         </div>
 
         <!--Map-->
-        <div class="col-sm-8">
+        <div id="mapParent" class="col" >
             
             <div id="map" >
                 
@@ -161,8 +190,6 @@
         </div>
 
     </div>
-
-    
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
