@@ -16,17 +16,17 @@ function getNearestURACP($lat, $long){
 
     // Call URA CP to get:
     // Carpark No: A0011, Coordinates (E & N): 29730.2995,30701.2921, lots availability: 20
-    $URA_CP = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
-    $avails_json =  call_ura_api($URA_CP);
+    $URA_avail_url = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Availability";
+    $avails_json =  call_ura_api($URA_avail_url);
     $avails_arr = $avails_json['Result'];
 
     // Associative array of nearby carparks and their details (coordinates and lots availability)
-    $clean_cpno_avails = nearbyCP($avails_arr,$easting,$northing,1000);
+    $clean_cpno_avails = clean_ura_avail($avails_arr,$easting,$northing,1000);
 
     // Call URA CP information to get:
     // Carpark No: A0011, Address: ARMENIAN STREET OFF STREET, Rates: $1.20, parkCapacity: 45, startTime: 07.00 AM, endTime: 11.00 AM
-    $URA_info = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details";
-    $URA_details = call_ura_api($URA_info);
+    $URA_details_url = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details";
+    $URA_details = call_ura_api($URA_details_url);
     $details_arr = $URA_details['Result'];
 
     // Associative array of nearby carparks and their details (coordinates, lots availability + ADDRESS and RATES)
@@ -36,7 +36,7 @@ function getNearestURACP($lat, $long){
 }
 
 // Returns NEARBY Carpark No and their Easting, Northing and Lot Availabilities
-function nearbyCP($avails_arr,$in_e,$in_n,$range) {
+function clean_ura_avail($avails_arr,$in_e,$in_n,$range) {
     $min_e = $in_e - $range;
     $max_e = $in_e + $range;
     $min_n = $in_n - $range;
@@ -44,9 +44,9 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
 
     $out_assoc_arr = [];
 
-    // $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
-    // $destin_lat = $destin_latlon['latitude'];
-    // $destin_lon = $destin_latlon['longitude'];
+    $destin_latlon = convert_svy21_to_xy($in_e, $in_n);
+    $destin_lat = $destin_latlon['latitude'];
+    $destin_lon = $destin_latlon['longitude'];
 
     for ($i=3;$i<count($avails_arr);$i++) {
         $this_lot_type = $avails_arr[$i]['lotType'];
@@ -69,10 +69,10 @@ function nearbyCP($avails_arr,$in_e,$in_n,$range) {
                     $this_lat = $this_EN['latitude'];
                     $this_long = $this_EN['longitude'];
 
-                    // $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
+                    $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
 
-                    $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails];
-                    // $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails,$this_rel_dist_km];
+                    //$out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails];
+                    $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails,$this_rel_dist_km];
                 }
             }
             // echo '<br>';
@@ -98,13 +98,13 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
             $this_sat_rates = $details_arr[$i]['satdayRate'];
             $this_sun_rates = $details_arr[$i]['sunPHRate'];
 
-            // $this_charging_interval = $details_arr[$i]['weekdayMin'];
+            $this_charging_interval = $details_arr[$i]['weekdayMin'];
 
             $this_latitude = $clean_cpno[$this_cpNo][0];
             $this_longitude = $clean_cpno[$this_cpNo][1];
             $this_lot_avail = $clean_cpno[$this_cpNo][2];
 
-            // $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
+            $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
             
 
             $out_assoc_arr[$this_cpNo] = [
@@ -115,10 +115,10 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
                 "Latitude" => $this_latitude, 
                 "Longitude" => $this_longitude, 
                 "LotAvail" => $this_lot_avail,
-                "DistToDest" => $this_dist_to_dest
-                // "ChargingInterval" => $this_charging_interval
+
+                "DistToDest" => $this_dist_to_dest,
+                "ChargingInterval" => $this_charging_interval
             ];
-            // echo '<br>';
         }
     }
 
@@ -137,8 +137,8 @@ function LatLonToDistance($lat1, $lon1, $lat2, $lon2) {
             $dist = acos($dist);
             $dist = rad2deg($dist);
             $miles = $dist * 60 * 1.1515;
-        
-            return ($miles * 1.609344);
+            
+            return round(($miles * 1.609344), 2);
         }
     }
 
