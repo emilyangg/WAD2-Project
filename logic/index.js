@@ -65,6 +65,8 @@ function display_map_home() {
 	var destination = convert_geocode(address);
 	var latitude = destination["lat"];
 	var longitude = destination["lng"];
+	console.log(latitude);
+	console.log(longitude);
 	var LatLng = new google.maps.LatLng(latitude, longitude);
 	map.setCenter(LatLng);
 	var marker = new google.maps.Marker({
@@ -82,6 +84,7 @@ function call_carpark_api(lat, lng) {
 
 	request.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
+			console.log(this.responseText)
 			var response = JSON.parse(this.responseText);
 			console.log(response);
 			display_carpark_list(response, lat, lng);
@@ -98,11 +101,16 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 		carpark_list_counter += 1;
 		var carpark_lat = carpark_obj[carpark]["Latitude"];
 		var carpark_lng = carpark_obj[carpark]["Longitude"];
-		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
+
+		var distance = carpark_obj[carpark]["DistToDest"];
+		var charge_interval = carpark_obj[carpark]["ChargingInterval"];
+
 		var rates = carpark_obj[carpark].WeekdayRates;
 		var rates_color =  "color: ";
+
 		var avail_lots = carpark_obj[carpark].LotAvail;
 		var avail_lots_color = "color: ";
+
 		if (avail_lots < 11) {
             avail_lots_color += "red";
     	}
@@ -127,7 +135,7 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 				<span class="font-weight-bold">${carpark_list_counter}. ${carpark_obj[carpark].Address}</span><br>
 				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
 				<span style="${avail_lots_color}">Lots available: ${avail_lots}</span><br>
-				<span style="${rates_color}">Rates: ${rates} </span><br>
+				<span style="${rates_color}">Rates: ${rates} per ${charge_interval}</span><br>
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
@@ -144,6 +152,7 @@ function display_HDB_carpark(carpark_obj, lat, lng) {
 		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
 		var rates = carpark_obj[carpark]["Rates"];
 		var rates_color =  "color: ";
+		
 		var avail_lots = carpark_obj[carpark]["Lots Available"];
 		var avail_lots_color = "color: ";
 		if (avail_lots < 11) {
