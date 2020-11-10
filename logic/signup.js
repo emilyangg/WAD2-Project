@@ -35,14 +35,14 @@ function check_for_authentication() {
             console.log(userId);
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
                 var username = snapshot.val().username;
-                document.getElementById("navbar").innerHTML += `
+                document.getElementById("logoName").innerHTML += `
                     <div class="d-flex justify-content-end">
                         <i class="fas fa-user-circle mt-1 mr-1"></i> ${username}
                     </div>
                 `;
             });
         } else {
-            document.getElementById("navbar").innerHTML += `
+            document.getElementById("logoName").innerHTML += `
                 <div class="d-flex justify-content-end">
                     <i class="fas fa-user-circle mt-1 mr-1"></i> <a href="login.html">Login</a>
                 </div>
