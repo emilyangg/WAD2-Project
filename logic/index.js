@@ -61,7 +61,8 @@ function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();
 	}
-
+	// document.getElementById('loading').style.display = 'block';
+	console.log(document.getElementById('loading').style);
   	var address = document.getElementById("endpoint").value;
 	var destination = convert_geocode(address);
 	var latitude = destination["lat"];
@@ -191,14 +192,14 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 
 function sortby_distance(combined_list=window.value) {
 	combined_list.sort(function(a, b){return a[0]-b[0]});
-
-	display_carpark_list(combined_list)
+	console.log('1')
+	display_carpark_list(combined_list);
 }
 
 function sortby_price(combined_list=window.value) {
 	combined_list.sort(function(a, b){return a[5]-b[5]});
-
-	display_carpark_list(combined_list)
+	console.log('2')
+	display_carpark_list(combined_list);
 }
 
 function display_carpark_list(combined_list) {
@@ -206,7 +207,9 @@ function display_carpark_list(combined_list) {
 	
 
 	var carpark_display_str = `
-		<ul class="list-group">
+		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_distance()">Sort by Distance</button>
+		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_price()">Sort by Price</button>
+		<ul class="list-group mt-1">
 	`;
 	carpark_list_counter = 0;
 
@@ -531,3 +534,16 @@ function getGeoLocation() {
 		alert("Geolocation is not enabled.");
 	}
 }
+
+// function hideLoader() {
+//     $('#loading').hide();
+// }
+
+// function showLoader() {
+//     $('#loading').show();
+// }
+
+// $(window).ready(showLoader);
+
+// Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
+// setTimeout(hideLoader, 20 * 1000);
