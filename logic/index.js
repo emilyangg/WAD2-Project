@@ -77,7 +77,6 @@ function display_map_home() {
 	});
 	markers.push(marker);
 	call_carpark_api(latitude, longitude);
-	document.getElementById("endButton").innerHTML = '';
 }
 
 function call_carpark_api(lat, lng) {
