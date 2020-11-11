@@ -1,7 +1,7 @@
 var map;
 var markers = [];
-var carpark_list_counter = 0;
 var route_list_counter = 0;
+var carpark_list_counter = 0
 
 // Embed map
 function initMap() {
@@ -114,6 +114,7 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
 		var charge_interval = carpark_obj[carpark]["ChargingInterval"];
 
 		var rates = carpark_obj[carpark].WeekdayRates;
+		var rates_float = parseFloat(rates.slice(1,rates.length));
 		var rates_color =  "color: ";
 
 		var avail_lots = carpark_obj[carpark].LotAvail;
@@ -129,16 +130,16 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
             avail_lots_color += "green";
 		}
 		
-		if (parseFloat(rates.slice(1,rates.length)) <= 1) {
+		if (rates_float <= 1) {
 			rates_color += "green";
 		}
-		else if (parseFloat(rates.slice(1,rates.length)) <= 2) {
+		else if (rates_float <= 2) {
 			rates_color += "orange";
 		}
 		else {
 			rates_color += "red";
 		}
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates,rates_color,avail_lots,avail_lots_color])
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
 
 	}
 
@@ -153,6 +154,7 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 		var carpark_lng = carpark_obj[carpark]["Longitude"];
 		var distance = carpark_obj[carpark]["DistanceToDest"];
 		var rates = carpark_obj[carpark]["Rates"];
+		var rates_float = parseFloat(rates.slice(1,rates.length));
 		var rates_color =  "color: ";
 		var charge_interval = "30 mins";
 		
@@ -169,10 +171,10 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
             avail_lots_color += "green";
 		}
 		
-		if (parseFloat(rates.slice(1,rates.length)) <= 1) {
+		if (rates_float <= 1) {
 			rates_color += "green";
 		}
-		else if (parseFloat(rates.slice(1,rates.length)) <= 2) {
+		else if (rates_float <= 2) {
 			rates_color += "orange";
 		}
 		else {
@@ -184,27 +186,29 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 			avail_lots_color = "color: blue"
 		}
 
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates,rates_color,avail_lots,avail_lots_color])
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
 	}
 	
 	return carpark_list
 }
 
 function sortby_distance(combined_list=window.value) {
-	combined_list.sort(function(a, b){return a[0]-b[0]});
-	console.log('1')
-	display_carpark_list(combined_list);
+	var sorted_list = combined_list.sort(function(a, b){return a[0]-b[0]});
+	clearMarkers(1);
+
+	document.getElementById("carpark_list").innerHTML = '';
+	display_carpark_list(sorted_list);
 }
 
 function sortby_price(combined_list=window.value) {
-	combined_list.sort(function(a, b){return a[5]-b[5]});
-	console.log('2')
-	display_carpark_list(combined_list);
+	var sorted_list = combined_list.sort(function(a, b){return a[5]-b[5]});
+	clearMarkers(1);
+
+	document.getElementById("carpark_list").innerHTML = '';
+	display_carpark_list(sorted_list);
 }
 
-function display_carpark_list(combined_list) {
-	
-	
+function display_carpark_list(display_carpark_list) {
 
 	var carpark_display_str = `
 		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_distance()">Sort by Distance</button>
@@ -213,13 +217,13 @@ function display_carpark_list(combined_list) {
 	`;
 	carpark_list_counter = 0;
 
-	for (carpark of combined_list) {
+	for (carpark of display_carpark_list) {
 		carpark_list_counter += 1;
 		var address = carpark[3]
 		var carpark_lat = carpark[1];
 		var carpark_lng = carpark[2];
 		var distance = carpark[0];
-		var rates = carpark[5];
+		var rates = carpark[5].toFixed(2);
 		var rates_color =  carpark[6];
 		var charge_interval = carpark[4];
 		
@@ -231,7 +235,7 @@ function display_carpark_list(combined_list) {
 				<span class="font-weight-bold">${carpark_list_counter}. ${address}</span><br>	
 				<span>Distance from Destination: ${distance}km</span><br>
 				<span style="${avail_lots_color}">Available Lots: ${avail_lots}</span><br>
-				<span style="${rates_color}">Rates: ${rates} per ${charge_interval}</span><br>
+				<span style="${rates_color}">Rates: $${rates} per ${charge_interval}</span><br>
 				<div class="btn-group mb-3">
 					<button type="button" class="btn btn-primary" onclick="prepare_generate_route('${address}')">
 						Select Carpark
@@ -306,8 +310,8 @@ function display_markers(lat, lng) {
 	markers.push(marker);
 }
 
-function clearMarkers() {
-    for (var i = 0; i < markers.length; i++) {
+function clearMarkers(start = 0) {
+    for (var i = start; i < markers.length; i++) {
         markers[i].setMap(null);
     }
     markers = [];
