@@ -87,7 +87,14 @@ function call_carpark_api(lat, lng) {
 			console.log(this.responseText)
 			var response = JSON.parse(this.responseText);
 			console.log(response);
-			display_carpark_list(response, lat, lng);
+
+			var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
+			var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
+			
+			var combined_list = hdb_list.concat(ura_list);
+			window.value = combined_list;
+
+			sortby_distance();
 		}
 	}
 	var url = "api/carpark/read.php?lat=" + lat + "&lng=" + lng;
@@ -146,10 +153,11 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 		var distance = carpark_obj[carpark]["DistanceToDest"];
 		var rates = carpark_obj[carpark]["Rates"];
 		var rates_color =  "color: ";
-		var charge_interval = 30;
+		var charge_interval = "30 mins";
 		
 		var avail_lots = carpark_obj[carpark]["Lots Available"];
 		var avail_lots_color = "color: ";
+
 		if (avail_lots < 11) {
             avail_lots_color += "red";
     	}
@@ -170,20 +178,32 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 			rates_color += "red";
 		}
 
+		if (avail_lots == undefined) {
+			avail_lots = "Data not available";
+			avail_lots_color = "color: blue"
+		}
+
 		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates,rates_color,avail_lots,avail_lots_color])
 	}
 	
 	return carpark_list
 }
 
-function display_carpark_list(carpark_obj, lat, lng) {
-	var hdb_list = HDB_carpark_to_list(carpark_obj["HDB"], lat, lng)
-	var ura_list = URA_carpark_to_list(carpark_obj["URA"], lat, lng)
+function sortby_distance(combined_list=window.value) {
+	combined_list.sort(function(a, b){return a[0]-b[0]});
+
+	display_carpark_list(combined_list)
+}
+
+function sortby_price(combined_list=window.value) {
+	combined_list.sort(function(a, b){return a[5]-b[5]});
+
+	display_carpark_list(combined_list)
+}
+
+function display_carpark_list(combined_list) {
 	
-	var combined_list = hdb_list.concat(ura_list);
-	combined_list.sort(function(a, b){return a[0]-b[0]})
-	console.log("combined car park list")
-	console.log(combined_list)
+	
 
 	var carpark_display_str = `
 		<ul class="list-group">
