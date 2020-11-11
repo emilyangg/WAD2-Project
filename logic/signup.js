@@ -35,18 +35,27 @@ function check_for_authentication() {
             console.log(userId);
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
                 var username = snapshot.val().username;
-                document.getElementById("logoName").innerHTML += `
-                    <div class="d-flex justify-content-end">
+                document.getElementById("user").innerHTML = `
+                    <div class="dropdown-toggle" style="float: right;font-size: 0.5em;" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user-circle mt-1 mr-1"></i> ${username}
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" onclick="sign_out()">Sign out</a>
+                        </div>
                     </div>
                 `;
             });
         } else {
-            document.getElementById("logoName").innerHTML += `
+            document.getElementById("user").innerHTML = `
                 <div style="float: right;font-size: 0.5em;">
                     <i class="fas fa-user-circle mt-1 mr-1"></i> <a style="color:white;" href="login.html">Login</a>
                 </div>
             `;
         }
     });
+}
+
+function sign_out() {
+    firebase.auth().signOut().then(function () {
+        alert("You have successfully signed out!");
+    }).catch(function (error) {});
 }

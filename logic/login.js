@@ -123,3 +123,9 @@ function display_saved() {
         }
     });
 }
+
+function sign_out() {
+    firebase.auth().signOut().then(function () {
+        alert("You have successfully signed out!");
+    }).catch(function (error) {});
+}
