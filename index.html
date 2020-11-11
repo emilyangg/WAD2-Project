@@ -88,8 +88,8 @@
             display: none;
         }
         #loading {
-            display: none;  
-            background: url('./view/images/loading.gif') no-repeat center center;
+            /* visibility: hidden;   */
+            /* background: url('./view/images/loading.gif') no-repeat center center; */
             position: absolute;
             top: 100;
             left: 0;
@@ -126,7 +126,7 @@
                     <div class="input-group mb-3">
                         <input type="text" class="form-control" placeholder="Traveling to..." id="endpoint">
                         <span id="endButton" class="input-group-append">
-                            <button  type="button" class=" btn btn-info" onclick="display_map_home()">
+                            <button  type="button" class=" btn btn-info" onclick="showLoad()">
                                 Enter
                             </button>
                         </span>
@@ -152,7 +152,9 @@
             </div>
                     
             <div class="container" id="carpark_list">
-                <div id="loading"></div>
+                <div id="loading">
+            
+                </div>
             </div> 
                     
             <div class="container" id="carpark_info">

@@ -57,12 +57,23 @@ function convert_geocode(address) {
 	return center;
 }
 
+function showLoad(){
+	document.getElementById('loading').innerHTML = `<img src="./view/images/loading.gif">`;
+	console.log(document.getElementById('loading'));
+	while (true){
+		if (document.getElementById('loading').innerHTML != ``){
+			display_map_home();
+			break;
+		}
+		
+	}
+}
+
 function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();
 	}
-	// document.getElementById('loading').style.display = 'block';
-	console.log(document.getElementById('loading').style);
+
   	var address = document.getElementById("endpoint").value;
 	var destination = convert_geocode(address);
 	var latitude = destination["lat"];
@@ -84,6 +95,7 @@ function call_carpark_api(lat, lng) {
 	var request = new XMLHttpRequest();
 
 	request.onreadystatechange = function() {
+		// document.getElementById("loading").style.visibility = "visible";
 		if (this.readyState == 4 && this.status == 200) {
 			console.log(this.responseText)
 			var response = JSON.parse(this.responseText);
@@ -99,7 +111,7 @@ function call_carpark_api(lat, lng) {
 		}
 	}
 	var url = "api/carpark/read.php?lat=" + lat + "&lng=" + lng;
-	request.open("GET", url, false);
+	request.open("GET", url, true);
 	request.send();
 }
 
