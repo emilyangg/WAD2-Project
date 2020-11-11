@@ -381,16 +381,15 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
 				// console.log(response.routes[i]);
 				var route = response.routes[i];
 				// console.log(route);
-				// var steps = route.legs[0].steps;
-				// var steps_stringify = JSON.stringify(steps);
-				// var route_string = JSON.stringify(route);
+				var steps = route.legs[0].steps;
+				var steps_stringify = JSON.stringify(steps);
 				// console.log(steps_stringify);
 				route_list += `
 					<li class="list-group-item">
 						<span class="font-weight-bold">${route.summary}</span><br>
 						<span>Distance: ${route.legs[0].distance.text}</span><br>
 						<span>Duration: ${route.legs[0].duration.text}</span>
-						<button type="button" class="btn btn-primary" onclick='route_info('')'>Get Directions</button>
+						<button type="button" class="btn btn-primary" onclick='route_info("${steps_stringify}")'>Get Directions</button>
 					</li>
 				`;
                 new google.maps.DirectionsRenderer({
