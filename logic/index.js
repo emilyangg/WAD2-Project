@@ -135,12 +135,8 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 			<li class="list-group-item">
 				<span class="font-weight-bold">${carpark_list_counter}. ${carpark_obj[carpark]["Address"]}</span><br>	
 				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
-<<<<<<< Updated upstream
 				<span style="${avail_lots_color}">Lots available: ${avail_lots}</span><br>
 				<span style="${rates_color}">Rates: ${rates} per ${charge_interval}</span><br>
-=======
-				<span style="${avail_lots_color}">Number of available lots: ${avail_lots}</span><br>
-				<span style="${rates_color}">Rates: ${rates}</span><br>
 				<div class="btn-group mb-3">
 					<button type="button" class="btn btn-primary" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
 						Select Carpark
@@ -152,7 +148,6 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 						Locate Carpark
 					</button>
 				</div>
->>>>>>> Stashed changes
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);

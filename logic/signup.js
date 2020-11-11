@@ -43,8 +43,8 @@ function check_for_authentication() {
             });
         } else {
             document.getElementById("logoName").innerHTML += `
-                <div class="d-flex justify-content-end">
-                    <i class="fas fa-user-circle mt-1 mr-1"></i> <a href="login.html">Login</a>
+                <div style="float: right;font-size: 0.5em;">
+                    <i class="fas fa-user-circle mt-1 mr-1"></i> <a style="color:white;" href="login.html">Login</a>
                 </div>
             `;
         }
