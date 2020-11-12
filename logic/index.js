@@ -1,7 +1,7 @@
 var map;
 var markers = [];
-var carpark_list_counter = 0;
 var route_list_counter = 0;
+var carpark_list_counter = 0
 
 // Embed map
 function initMap() {
@@ -57,11 +57,12 @@ function convert_geocode(address) {
 	return center;
 }
 
+
 function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();
 	}
-
+	document.getElementById('loading').style.display = "block";
   	var address = document.getElementById("endpoint").value;
 	var destination = convert_geocode(address);
 	var latitude = destination["lat"];
@@ -87,19 +88,25 @@ function call_carpark_api(lat, lng) {
 			console.log(this.responseText)
 			var response = JSON.parse(this.responseText);
 			console.log(response);
-			display_carpark_list(response, lat, lng);
+
+			var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
+			var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
+			
+			var combined_list = hdb_list.concat(ura_list);
+			window.value = combined_list;
+
+			sortby_distance();
 		}
 	}
 	var url = "api/carpark/read.php?lat=" + lat + "&lng=" + lng;
-	request.open("GET", url, false);
+	request.open("GET", url, true);
 	request.send();
 }
 
-function display_URA_carpark(carpark_obj, lat, lng) {
-	carpark_list_counter = 0;
-	var carpark_list = ``;
+function URA_carpark_to_list(carpark_obj, lat, lng) {
+	var carpark_list = [];
 	for (carpark in carpark_obj) {
-		carpark_list_counter += 1;
+		var address = carpark_obj[carpark]["Address"];
 		var carpark_lat = carpark_obj[carpark]["Latitude"];
 		var carpark_lng = carpark_obj[carpark]["Longitude"];
 
@@ -107,6 +114,7 @@ function display_URA_carpark(carpark_obj, lat, lng) {
 		var charge_interval = carpark_obj[carpark]["ChargingInterval"];
 
 		var rates = carpark_obj[carpark].WeekdayRates;
+		var rates_float = parseFloat(rates.slice(1,rates.length));
 		var rates_color =  "color: ";
 
 		var avail_lots = carpark_obj[carpark].LotAvail;
@@ -122,51 +130,37 @@ function display_URA_carpark(carpark_obj, lat, lng) {
             avail_lots_color += "green";
 		}
 		
-		if (parseFloat(rates.slice(1,rates.length)) <= 1) {
+		if (rates_float <= 1) {
 			rates_color += "green";
 		}
-		else if (parseFloat(rates.slice(1,rates.length)) <= 2) {
+		else if (rates_float <= 2) {
 			rates_color += "orange";
 		}
 		else {
 			rates_color += "red";
 		}
-		carpark_list += `
-			<li class="list-group-item">
-				<span class="font-weight-bold">${carpark_list_counter}. ${carpark_obj[carpark]["Address"]}</span><br>	
-				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
-				<span style="${avail_lots_color}">Lots available: ${avail_lots}</span><br>
-				<span style="${rates_color}">Rates: ${rates} per ${charge_interval}</span><br>
-				<div class="btn-group mb-3">
-					<button type="button" class="btn btn-primary" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
-						Select Carpark
-					</button>
-				</div>
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
 
-				<div class="btn-group mb-3">
-					<button type="button" class="btn btn-primary" onclick="map.setCenter({lat: ${carpark_lat}, lng: ${carpark_lng}})">
-						Locate Carpark
-					</button>
-				</div>
-			</li>
-		`;
-		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
 	}
+
 	return carpark_list
 }
 
-function display_HDB_carpark(carpark_obj, lat, lng) {
-	var carpark_list = ``;
+function HDB_carpark_to_list(carpark_obj, lat, lng) {
+	var carpark_list = [];
 	for (carpark in carpark_obj) {
-		carpark_list_counter += 1;
+		var address = carpark_obj[carpark]["Address"]
 		var carpark_lat = carpark_obj[carpark]["Latitude"];
 		var carpark_lng = carpark_obj[carpark]["Longitude"];
-		var distance = calculateDistance(lat, lng, carpark_lat, carpark_lng);
+		var distance = carpark_obj[carpark]["DistanceToDest"];
 		var rates = carpark_obj[carpark]["Rates"];
+		var rates_float = parseFloat(rates.slice(1,rates.length));
 		var rates_color =  "color: ";
+		var charge_interval = "30 mins";
 		
 		var avail_lots = carpark_obj[carpark]["Lots Available"];
 		var avail_lots_color = "color: ";
+
 		if (avail_lots < 11) {
             avail_lots_color += "red";
     	}
@@ -177,23 +171,73 @@ function display_HDB_carpark(carpark_obj, lat, lng) {
             avail_lots_color += "green";
 		}
 		
-		if (parseFloat(rates.slice(1,rates.length)) <= 1) {
+		if (rates_float <= 1) {
 			rates_color += "green";
 		}
-		else if (parseFloat(rates.slice(1,rates.length)) <= 2) {
+		else if (rates_float <= 2) {
 			rates_color += "orange";
 		}
 		else {
 			rates_color += "red";
 		}
-		carpark_list += `
+
+		if (avail_lots == undefined) {
+			avail_lots = "Data not available";
+			avail_lots_color = "color: blue"
+		}
+
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
+	}
+	
+	return carpark_list
+}
+
+function sortby_distance(combined_list=window.value) {
+	var sorted_list = combined_list.sort(function(a, b){return a[0]-b[0]});
+	clearMarkers(1);
+
+	document.getElementById("carpark_list").innerHTML = '';
+	display_carpark_list(sorted_list);
+}
+
+function sortby_price(combined_list=window.value) {
+	var sorted_list = combined_list.sort(function(a, b){return a[5]-b[5]});
+	clearMarkers(1);
+
+	document.getElementById("carpark_list").innerHTML = '';
+	display_carpark_list(sorted_list);
+}
+
+function display_carpark_list(display_carpark_list) {
+
+	var carpark_display_str = `
+		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_distance()">Sort by Distance</button>
+		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_price()">Sort by Price</button>
+		<ul class="list-group mt-1">
+	`;
+	carpark_list_counter = 0;
+
+	for (carpark of display_carpark_list) {
+		carpark_list_counter += 1;
+		var address = carpark[3]
+		var carpark_lat = carpark[1];
+		var carpark_lng = carpark[2];
+		var distance = carpark[0];
+		var rates = carpark[5].toFixed(2);
+		var rates_color =  carpark[6];
+		var charge_interval = carpark[4];
+		
+		var avail_lots = carpark[7];
+		var avail_lots_color = carpark[8];
+
+		carpark_display_str += `
 			<li class="list-group-item">
-				<span class="font-weight-bold">${carpark_list_counter}. ${carpark_obj[carpark]["Address"]}</span><br>	
-				<span>Distance from Destination: ${distance.toFixed(2)}km</span><br>
-				<span style="${avail_lots_color}">Number of available lots: ${avail_lots}</span><br>
-				<span style="${rates_color}">Rates: ${rates}</span><br>
+				<span class="font-weight-bold">${carpark_list_counter}. ${address}</span><br>	
+				<span>Distance from Destination: ${distance}km</span><br>
+				<span style="${avail_lots_color}">Available Lots: ${avail_lots}</span><br>
+				<span style="${rates_color}">Rates: $${rates} per ${charge_interval}</span><br>
 				<div class="btn-group mb-3">
-					<button type="button" class="btn btn-primary" onclick="prepare_generate_route('${carpark_obj[carpark].Address}')">
+					<button type="button" class="btn btn-primary" onclick="prepare_generate_route('${address}')">
 						Select Carpark
 					</button>
 				</div>
@@ -207,21 +251,11 @@ function display_HDB_carpark(carpark_obj, lat, lng) {
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
 	}
-	return carpark_list
-}
 
-function display_carpark_list(carpark_obj, lat, lng) {
-	var carpark_list = `
-		<ul class="list-group">
-	`;
-	
-	carpark_list += display_URA_carpark(carpark_obj["URA"], lat, lng);
-	carpark_list += display_HDB_carpark(carpark_obj["HDB"], lat, lng);
-
-	carpark_list += `
+	carpark_display_str += `
 		</ul>
 	`;
-	document.getElementById("carpark_list").innerHTML = carpark_list; 
+	document.getElementById("carpark_list").innerHTML = carpark_display_str; 
 	document.getElementById("carpark_info").innerHTML = "";
 	document.getElementById("route_list").innerHTML = "";
 	document.getElementById("route_info").innerHTML = "";
@@ -276,8 +310,8 @@ function display_markers(lat, lng) {
 	markers.push(marker);
 }
 
-function clearMarkers() {
-    for (var i = 0; i < markers.length; i++) {
+function clearMarkers(start = 0) {
+    for (var i = start; i < markers.length; i++) {
         markers[i].setMap(null);
     }
     markers = [];
@@ -354,16 +388,15 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
 				// console.log(response.routes[i]);
 				var route = response.routes[i];
 				// console.log(route);
-				// var steps = route.legs[0].steps;
-				// var steps_stringify = JSON.stringify(steps);
-				// var route_string = JSON.stringify(route);
+				var steps = route.legs[0].steps;
+				var steps_stringify = JSON.stringify(steps);
 				// console.log(steps_stringify);
 				route_list += `
 					<li class="list-group-item">
 						<span class="font-weight-bold">${route.summary}</span><br>
 						<span>Distance: ${route.legs[0].distance.text}</span><br>
 						<span>Duration: ${route.legs[0].duration.text}</span>
-						<button type="button" class="btn btn-primary" onclick='route_info('')'>Get Directions</button>
+						<button type="button" class="btn btn-primary" onclick='route_info("${steps_stringify}")'>Get Directions</button>
 					</li>
 				`;
                 new google.maps.DirectionsRenderer({
@@ -505,3 +538,16 @@ function getGeoLocation() {
 		alert("Geolocation is not enabled.");
 	}
 }
+
+// function hideLoader() {
+//     $('#loading').hide();
+// }
+
+// function showLoader() {
+//     $('#loading').show();
+// }
+
+// $(window).ready(showLoader);
+
+// Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
+// setTimeout(hideLoader, 20 * 1000);

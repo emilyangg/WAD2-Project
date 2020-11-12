@@ -87,6 +87,16 @@
         ::-webkit-scrollbar {
             display: none;
         }
+        #loading {
+            display: none;
+            background: url('./view/images/loading.gif') no-repeat center center;
+            position: absolute;
+            top: 100;
+            left: 0;
+            height: 50%;
+            width: 100%;
+            z-index: 9999999;
+        }
     </style>
     
     <title>App Title</title>
@@ -142,6 +152,7 @@
             </div>
                     
             <div class="container" id="carpark_list">
+                <div id="loading"></div>
             </div> 
                     
             <div class="container" id="carpark_info">
