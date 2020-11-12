@@ -96,6 +96,7 @@ function call_carpark_api(lat, lng) {
 }
 
 function display_URA_carpark(carpark_obj, lat, lng) {
+	carpark_list_counter = 0;
 	var carpark_list = ``;
 	for (carpark in carpark_obj) {
 		carpark_list_counter += 1;

@@ -32,13 +32,13 @@ function check_for_authentication() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             var userId = user.uid;
-            console.log(userId);
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
                 var username = snapshot.val().username;
                 document.getElementById("user").innerHTML = `
                     <div class="dropdown-toggle" style="float: right;font-size: 0.5em;" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user-circle mt-1 mr-1"></i> ${username}
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" onClick="location.href='./update.html'">Edit Profile</a>
                             <a class="dropdown-item" onclick="sign_out()">Sign out</a>
                         </div>
                     </div>

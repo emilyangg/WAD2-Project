@@ -10,7 +10,7 @@ function call_ura_api($url) {
 	// Set cURL Headers
 	curl_setopt($curl, CURLOPT_HTTPHEADER, array(
 		'AccessKey: 31d76d00-70aa-46bc-b5d0-5e025149ac5a',
-		'Token: GQAa94A+FY0D+WzN53a76b7s3ex0u-5zs6Sd@ZbyQ950uf0E-2jA@APu2s6k9br2a9pQnMCUZE8bJb9X4351-535Y8nJt-b52605',
+		'Token: 70@xDfAq-fand54-4X272r-05-pa6-+c89xGSbmB7gRtdrT66ddST9-bQcdpc5v4t07M+C0yTrS32556505ca0A09afv-d4bq607',
 	));
 
 	// return the transfer as a string, also with setopt()
