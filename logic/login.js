@@ -1,3 +1,4 @@
+// Login to user account
 function login() {
     var email = document.getElementById("email").value;
     var password = document.getElementById("password").value;
@@ -56,6 +57,7 @@ function login() {
     }
 }
 
+// Save a trip with start and end location
 function save_this_trip() {
     var trip_name = document.getElementById("trip_name").value;
     var startLocation = document.getElementById("startpoint").value;
@@ -97,6 +99,7 @@ function save_this_trip() {
     });
 }
 
+// Display saved trips
 function display_saved() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
@@ -108,13 +111,16 @@ function display_saved() {
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
                 var saved_trips = snapshot.val().saved_trips;
                 for (trip in saved_trips) {
+                    var start_location = saved_trips[trip]["start_location"];
+                    var end_location = saved_trips[trip]["end_location"];
                     saved_list += `
-                        <li class="list-group-item">
+                        <li class="list-group-item" id="${trip}_info">
                             <span class="font-weight-bold">${trip}</span><br>
-                            <span>Start Location: ${saved_trips[trip]["start_location"]}</span><br>
-                            <span>End Location: ${saved_trips[trip]["end_location"]}</span><br>
-                            <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${saved_trips[trip]["end_location"]}')">Nearby Carparks</button>
-                            <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${saved_trips[trip]["start_location"]}','${saved_trips[trip]["end_location"]}')">Find Routes</button>
+                            <span>Start Location: ${start_location}</span><br>
+                            <span>End Location: ${end_location}</span><br>
+                            <i class="far fa-edit" onclick="edit_trip('${start_location}','${end_location}')"></i> 
+                            <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${end_location}')">Nearby Carparks</button>
+                            <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${start_location}','${end_location}')">Find Routes</button>
                         </li>
                         
                     `;
@@ -128,6 +134,26 @@ function display_saved() {
     });
 }
 
+// Edit Trip
+function edit_trip(start_location, end_location) {
+    document.getElementById("saved_list").innerHTML = `
+        <h4>Edit Trip</h4>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="start_location_edit">Start Location</label>
+                    <input type="text" class="form-control" id="start_location_edit" value="${start_location}">
+                </div>
+                <div class="form-group">
+                    <label for="end_location_edit">End Location</label>
+                    <input type="text" class="form-control" id="end_location_edit" value="${end_location}">
+                </div>
+            </div>
+        </div>	
+    `;
+}
+
+// Sign out of user account
 function sign_out() {
     firebase.auth().signOut().then(function () {
         

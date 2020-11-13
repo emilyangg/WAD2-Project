@@ -1,3 +1,4 @@
+// Sign up for an account
 function sign_up() {
     var name = document.getElementById('name').value;
     var email = document.getElementById('email').value;
@@ -27,6 +28,7 @@ function sign_up() {
     });
 }
 
+// Check if users are signed in
 function check_for_authentication() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
