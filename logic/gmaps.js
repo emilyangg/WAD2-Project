@@ -1,5 +1,8 @@
 var map;
 var markers = [];
+var route_list_counter = 0;
+var carpark_list_counter = 0;
+window.value = {};
 
 // Embed map
 function initMap() {
@@ -139,29 +142,35 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
 				<h4>Routes Available</h4>
 				<ul class="list-group my-2">
 			`;
+			window.value['legs'] = {};
+
 			for (var i = 0, len = response.routes.length; i < len; i++) {
 				// console.log(response.routes[i]);
 				var instruction_list = []
 				var route = response.routes[i];
+				console.log(route);
+				
 				var steps = route.legs[0].steps;
+
 				for(step of steps) {
 					instruction_list.push(step.instructions)
-				}
+				};
 
 				var details = {
 					summary: route.summary,
 					distance: route.legs[0].distance.text,
 					duration: route.legs[0].duration.text,
-					instructions: instruction_list
+					instructions: instruction_list,
+					steps: steps
 				}
-				console.log(details);
-				
+				window.value['legs'][i] = details;
+
 				route_list += `
 					<li class="list-group-item">
 						<span class="font-weight-bold">${route.summary}</span><br>
 						<span>Distance: ${route.legs[0].distance.text}</span><br>
 						<span>Duration: ${route.legs[0].duration.text}</span><br>
-						<button type="button" class="btn btn-primary mt-1" onClick="route_info('')">Get Directions</button>
+						<button type="button" class="btn btn-primary mt-1" onClick="route_info(${i})">Get Directions</button>
 					</li>
 				`;
                 new google.maps.DirectionsRenderer({
@@ -183,8 +192,13 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
 }
 
 // Show route information 
-function route_info(route_details) {
-	var details = JSON.parse(route_details);
+function route_info(route_index) {
+	var details = window.value['legs'][route_index];
+	var steps = details.steps;
+
+	console.log('Hello I am route info function');
+	console.log(details);
+
 	var direction_list = `
 		<h4>${details.summary}</h4>
 		<h5>${details.distance}, ${details.duration}</h5>

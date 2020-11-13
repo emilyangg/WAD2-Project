@@ -1,3 +1,5 @@
+window.value = {};
+
 // Call carpark API in read.php
 function call_carpark_api(lat, lng) {
 	var request = new XMLHttpRequest();
@@ -10,7 +12,7 @@ function call_carpark_api(lat, lng) {
 			var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
 			
 			var combined_list = hdb_list.concat(ura_list);
-			window.value = combined_list;
+			window.value['carparks_list'] = combined_list;
 
 			sortby_distance();
 		}
@@ -112,7 +114,7 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 }
 
 // Sort carpark list by distance
-function sortby_distance(combined_list=window.value) {
+function sortby_distance(combined_list=window.value['carparks_list']) {
 	var sorted_list = combined_list.sort(function(a, b){return a[0]-b[0]});
 	clearMarkers(1);
 
@@ -121,7 +123,7 @@ function sortby_distance(combined_list=window.value) {
 }
 
 // Sort carpark list by price
-function sortby_price(combined_list=window.value) {
+function sortby_price(combined_list=window.value['carparks_list']) {
 	var sorted_list = combined_list.sort(function(a, b){return a[5]-b[5]});
 	clearMarkers(1);
 
