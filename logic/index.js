@@ -57,7 +57,7 @@ function convert_geocode(address) {
 	return center;
 }
 
-
+// Displays your destination on the map
 function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();

@@ -51,10 +51,12 @@ function convert_geocode(address) {
 	return center;
 }
 
+// Displays your destination on the map
 function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();
-	}
+    }
+    document.getElementById('carpark_list').innerHTML = `<div id="loading"></div>`;
 	document.getElementById('loading').style.display = "block";
   	var address = document.getElementById("endpoint").value;
 	var destination = convert_geocode(address);
@@ -76,49 +78,7 @@ function display_map_home() {
 	call_carpark_api(latitude, longitude);
 }
 
-function URA_carpark_to_list(carpark_obj, lat, lng) {
-	var carpark_list = [];
-	for (carpark in carpark_obj) {
-		var address = carpark_obj[carpark]["Address"];
-		var carpark_lat = carpark_obj[carpark]["Latitude"];
-		var carpark_lng = carpark_obj[carpark]["Longitude"];
-
-		var distance = carpark_obj[carpark]["DistToDest"];
-		var charge_interval = carpark_obj[carpark]["ChargingInterval"];
-
-		var rates = carpark_obj[carpark].WeekdayRates;
-		var rates_float = parseFloat(rates.slice(1,rates.length));
-		var rates_color =  "color: ";
-
-		var avail_lots = carpark_obj[carpark].LotAvail;
-		var avail_lots_color = "color: ";
-
-		if (avail_lots < 11) {
-            avail_lots_color += "red";
-    	}
-    	else if (avail_lots < 31) {
-        	avail_lots_color += "orange";
-    	}
-    	else {
-            avail_lots_color += "green";
-		}
-		
-		if (rates_float <= 1) {
-			rates_color += "green";
-		}
-		else if (rates_float <= 2) {
-			rates_color += "orange";
-		}
-		else {
-			rates_color += "red";
-		}
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
-
-	}
-
-	return carpark_list
-}
-
+// Display markers on map
 function display_markers(lat, lng) {
 	var LatLng = new google.maps.LatLng(lat, lng);
 	var marker = new google.maps.Marker({
@@ -131,6 +91,7 @@ function display_markers(lat, lng) {
 	markers.push(marker);
 }
 
+// Clear markers on map
 function clearMarkers(start = 0) {
     for (var i = start; i < markers.length; i++) {
         markers[i].setMap(null);
@@ -138,6 +99,7 @@ function clearMarkers(start = 0) {
     markers = [];
 }
 
+// Generate multiple routes based on start and end location
 function generate_route() {
 	var startLocation = document.getElementById("startpoint").value;
 	if (startLocation[0] == "!"){
@@ -164,6 +126,7 @@ function generate_route() {
 	displayRoute(directionsService, directionsRenderer, start_LatLng, end_LatLng);
 }
 
+// Display routes on map
 function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
     directionsService.route({
 		origin: pointA,
@@ -219,6 +182,7 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
     });
 }
 
+// Show route information 
 function route_info(route_details) {
 	var details = JSON.parse(route_details);
 	var direction_list = `
@@ -244,6 +208,7 @@ function route_info(route_details) {
 	document.getElementById("route_info").innerHTML = direction_list;
 }
 
+// Get user current location
 function getGeoLocation() {
 	if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(function (pos) {
@@ -259,6 +224,7 @@ function getGeoLocation() {
 	}
 }
 
+// Find routes based on the saved trip
 function findRoute(start_location, end_location) {
 	var startpoint = document.getElementById("startpoint")
 	if (startpoint != null) {
