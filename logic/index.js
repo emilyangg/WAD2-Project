@@ -326,6 +326,7 @@ function clearMarkers(start = 0) {
 
 function prepare_generate_route(endpoint) {
 	document.getElementById("endpoint").value = endpoint;
+	document.getElementById("endButton").innerHTML = "";
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
 			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
@@ -581,18 +582,6 @@ function getGeoLocation() {
 	}
 }
 
-// function hideLoader() {
-//     $('#loading').hide();
-// }
-
-// function showLoader() {
-//     $('#loading').show();
-// }
-
-// $(window).ready(showLoader);
-
-// Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
-// setTimeout(hideLoader, 20 * 1000);
 
 function findRoute(start_location, end_location) {
 	var startpoint = document.getElementById("startpoint")
