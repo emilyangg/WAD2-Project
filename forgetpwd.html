@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" height = "100vh">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -32,41 +32,34 @@
     </script>
 
     <!-- Custom JavaScript -->
-    <script src="logic/signup.js"></script>
+    <script src="logic/login.js"></script>
     <link rel="stylesheet" href="view/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/96c80c29ff.js" crossorigin="anonymous"></script>
 
-    <title>Sign Up</title>
+    <title>Login</title>
   </head>
-  <body>
-        <div id= "logoName" style = "color:white; background-color: black; text-align: center; font-family: 'Merriweather', serif; font-size: 1.5em; padding: 1em;"> WhereToPark  <i class="fas fa-car"></i> </div>
-
-        <div class="container">
-            <div class="card mx-auto my-5" style="width: 18rem;">
-                <div class="card-body">
-                    <h5 class="card-title lead text-center">Sign Up</h5>
-                    <form id="signUpForm" class="mt-4">
-                        <div class="form-label-group">
-                            <input type="text" class="form-control" id="name" placeholder="Name" required autofocus>
-                            <label for="name">Name</label>
-                        </div>
-                        <div class="form-label-group">
-                            <input type="email" class="form-control" id="email" placeholder="Email address" required autofocus>
-                            <label for="email">Email address</label>
-                        </div>
-                        <div class="form-label-group">
-                            <input type="password" class="form-control" id="password" placeholder="Password" required autofocus>
-                            <label for="password">Password</label>
-                        </div>
-                        <button type="button" class="btn btn-block btn-primary" onClick="sign_up()">Sign Up</button>
-                    </form>
+  <body >
+    <div id= "logoName" style = "color:white; background-color: black; text-align: center; font-family: 'Merriweather', serif; font-size: 1.5em; padding: 1em;"> WhereToPark  <i class="fas fa-car"></i> </div>
+    
+    <div style="width:100%; height:80%; display: flex; flex-direction:column; align-items:center; justify-content: center; padding:0px;">
+      <div class="card mx-auto" style=" width: 18rem; opacity: 0.85;">
+        <div class="card-body">
+            <h5 class="card-title lead text-center"><b>Reset Password</b></h5>
+            <form id="forgetPasswordForm" class="mt-4">
+                <div class="form-label-group">
+                    <input type="email" class="form-control" id="email" placeholder="Email address" required autofocus>
+                    <label for="email">Email address</label>
                 </div>
-              </div>
-            
-
-            <div class="mt-3" id="message">
-
-            </div>
+                <button type="button" class="btn btn-block btn-primary" onClick="login()">Login</button>
+            </form>
         </div>
+      </div>
+
+      <div class="mt-3" id="message">
+      </div>
+      
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

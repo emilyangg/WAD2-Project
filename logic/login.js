@@ -57,6 +57,7 @@ function login() {
 }
 
 function save_this_trip() {
+    var trip_name = document.getElementById("trip_name").value;
     var startLocation = document.getElementById("startpoint").value;
 	if (Array.isArray(startLocation)){
         var start_lat = startLocation[0];
@@ -76,13 +77,13 @@ function save_this_trip() {
         if (user) {
             var userId = user.uid;
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
-                var no_of_trips = snapshot.val().no_of_trips + 1;
-                var updates = {};
-                updates['/users/' + userId + '/no_of_trips/'] = no_of_trips;
+                // var no_of_trips = snapshot.val().no_of_trips + 1;
+                // var updates = {};
+                // updates['/users/' + userId + '/no_of_trips/'] = no_of_trips;
 
-                firebase.database().ref().update(updates);
+                // firebase.database().ref().update(updates);
 
-                firebase.database().ref('users/' + userId + '/saved_trips/' + 'trip' + no_of_trips).set({
+                firebase.database().ref('users/' + userId + '/saved_trips/' + trip_name).set({
                     start_location: startLocation,
                     start_lat: start_lat,
                     start_lng: start_lng,
@@ -100,7 +101,8 @@ function display_saved() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             var saved_list = `
-                <ul class="list-group">
+                <h4>Saved Trips</h4>
+                <ul class="list-group my-2">
             `;
             var userId = user.uid;
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
@@ -110,7 +112,9 @@ function display_saved() {
                         <li class="list-group-item">
                             <span class="font-weight-bold">${trip}</span><br>
                             <span>Start Location: ${saved_trips[trip]["start_location"]}</span><br>
-                            <span>End Location: ${saved_trips[trip]["end_location"]}</span>
+                            <span>End Location: ${saved_trips[trip]["end_location"]}</span><br>
+                            <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${saved_trips[trip]["end_location"]}')">Nearby Carparks</button>
+                            <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${saved_trips[trip]["start_location"]}','${saved_trips[trip]["end_location"]}')">Find Routes</button>
                         </li>
                         
                     `;
@@ -118,7 +122,7 @@ function display_saved() {
                 saved_list += `
                     </ul>
                 `;
-                document.getElementById("carpark_list").innerHTML = saved_list; 
+                document.getElementById("saved_list").innerHTML = saved_list; 
             });
         }
     });
@@ -126,6 +130,6 @@ function display_saved() {
 
 function sign_out() {
     firebase.auth().signOut().then(function () {
-        alert("You have successfully signed out!");
+        
     }).catch(function (error) {});
 }

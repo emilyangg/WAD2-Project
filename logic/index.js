@@ -74,7 +74,10 @@ function display_map_home() {
 	var marker = new google.maps.Marker({
 		position: LatLng, 
 		map: map,
-		title: ""
+		title: "Destination",
+		icon: {                             
+			url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
+		}
 	});
 	markers.push(marker);
 	call_carpark_api(latitude, longitude);
@@ -85,9 +88,7 @@ function call_carpark_api(lat, lng) {
 
 	request.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
-			console.log(this.responseText)
 			var response = JSON.parse(this.responseText);
-			console.log(response);
 
 			var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
 			var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
@@ -211,9 +212,22 @@ function sortby_price(combined_list=window.value) {
 function display_carpark_list(display_carpark_list) {
 
 	var carpark_display_str = `
-		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_distance()">Sort by Distance</button>
-		<button class="btn btn-light" style="border: 1px grey solid" onclick="sortby_price()">Sort by Price</button>
-		<ul class="list-group mt-1">
+		<div class="d-flex">
+			<div class="mt-1">
+				<h4>Carparks Nearby</h4>
+			</div>
+			<div class="dropdown ml-auto">
+				<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					Sort By
+				</button>
+				<div class="dropdown-menu dropdown-menu-right"" aria-labelledby="dropdownMenuButton">
+					<a class="dropdown-item" onclick="sortby_distance()">Distance</a>
+					<a class="dropdown-item" onclick="sortby_price()">Price</a>
+				</div>
+			</div>
+		</div>
+		
+		<ul class="list-group my-2">
 	`;
 	carpark_list_counter = 0;
 
@@ -236,13 +250,13 @@ function display_carpark_list(display_carpark_list) {
 				<span>Distance from Destination: ${distance}km</span><br>
 				<span style="${avail_lots_color}">Available Lots: ${avail_lots}</span><br>
 				<span style="${rates_color}">Rates: $${rates} per ${charge_interval}</span><br>
-				<div class="btn-group mb-3">
+				<div class="btn-group mt-1">
 					<button type="button" class="btn btn-primary" onclick="prepare_generate_route('${address}')">
 						Select Carpark
 					</button>
 				</div>
 
-				<div class="btn-group mb-3">
+				<div class="btn-group mt-1">
 					<button type="button" class="btn btn-primary" onclick="map.setCenter({lat: ${carpark_lat}, lng: ${carpark_lng}})">
 						Locate Carpark
 					</button>
@@ -284,15 +298,7 @@ function display_markers(lat, lng) {
 		position: LatLng,
 		map: map,
 		title: "Carpark",
-		label: {
-			color: 'black',
-			fontWeight: 'bold',
-			fontSize: '20px',
-			text: carpark_list_counter.toString()
-		},
-		icon: {                             
-			url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
-		}
+		label: carpark_list_counter.toString()
 	});
 
 	// var infowindow = new google.maps.InfoWindow();  
@@ -342,7 +348,29 @@ function prepare_generate_route(endpoint) {
 
 	document.getElementById("carpark_list").innerHTML = ""; 
 	document.getElementById("saved_trips_buttons").innerHTML += `
-		<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="save_this_trip()">Save this trip</button>
+		<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal">
+			Save this trip
+		</button>
+
+		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Trip Info</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<input type="text" class="form-control" placeholder="Trip Name" id="trip_name">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal">Save</button>
+			</div>
+			</div>
+		</div>
+		</div>
 	`;
 }
 
@@ -367,7 +395,6 @@ function generate_route() {
 	var directionsRenderer = new google.maps.DirectionsRenderer();
 	directionsRenderer.setMap(map);
 	map.setCenter(start_LatLng);
-
 	clearMarkers();
 
 	displayRoute(directionsService, directionsRenderer, start_LatLng, end_LatLng);
@@ -382,21 +409,32 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
     }, function (response, status) {
         if (status == google.maps.DirectionsStatus.OK) {
 			var route_list = `
-				<ul class="list-group">
+				<h4>Routes Available</h4>
+				<ul class="list-group my-2">
 			`;
 			for (var i = 0, len = response.routes.length; i < len; i++) {
 				// console.log(response.routes[i]);
+				var instruction_list = []
 				var route = response.routes[i];
-				// console.log(route);
 				var steps = route.legs[0].steps;
-				var steps_stringify = JSON.stringify(steps);
-				// console.log(steps_stringify);
+				for(step of steps) {
+					instruction_list.push(step.instructions)
+				}
+
+				var details = {
+					summary: route.summary,
+					distance: route.legs[0].distance.text,
+					duration: route.legs[0].duration.text,
+					instructions: instruction_list
+				}
+				console.log(details);
+				
 				route_list += `
 					<li class="list-group-item">
 						<span class="font-weight-bold">${route.summary}</span><br>
 						<span>Distance: ${route.legs[0].distance.text}</span><br>
-						<span>Duration: ${route.legs[0].duration.text}</span>
-						<button type="button" class="btn btn-primary" onclick='route_info("${steps_stringify}")'>Get Directions</button>
+						<span>Duration: ${route.legs[0].duration.text}</span><br>
+						<button type="button" class="btn btn-primary mt-1" onClick="route_info('')">Get Directions</button>
 					</li>
 				`;
                 new google.maps.DirectionsRenderer({
@@ -417,11 +455,14 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
     });
 }
 
-function route_info(steps_stringify) {
+function route_info(route_details) {
+	var details = JSON.parse(route_details);
 	var direction_list = `
+		<h4>${details.summary}</h4>
+		<h5>${details.distance}, ${details.duration}</h5>
 		<ul class="list-group">
 	`;
-	var steps = JSON.parse(steps_stringify);
+	
 	for (step of steps) {
 		route_list_counter += 1;
 		direction_list += `
@@ -551,3 +592,25 @@ function getGeoLocation() {
 
 // Strongly recommended: Hide loader after 20 seconds, even if the page hasn't finished loading
 // setTimeout(hideLoader, 20 * 1000);
+
+function findRoute(start_location, end_location) {
+	var startpoint = document.getElementById("startpoint")
+	if (startpoint != null) {
+		document.getElementById("startpoint").value = start_location
+	} else {
+		document.getElementById("startpoint_input").innerHTML = `
+			<div class="input-group mb-3">
+				<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint" value="${start_location}">
+			</div>	
+		`;
+	}
+	document.getElementById("endpoint").value = end_location;
+	document.getElementById("saved_list").innerHTML = "";
+	generate_route();
+}
+
+function findNearbyCarpark(end_location) {
+	document.getElementById("endpoint").value = end_location;
+	document.getElementById("saved_list").innerHTML = "";
+	display_map_home()
+}

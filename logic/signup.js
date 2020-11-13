@@ -10,7 +10,6 @@ function sign_up() {
         firebase.database().ref('users/' + uid).set({
             username: name,
             email: email,
-            no_of_trips: 0,
             saved_trips: ""
         });
 
@@ -37,25 +36,22 @@ function check_for_authentication() {
                 document.getElementById("user").innerHTML = `
                     <div class="dropdown-toggle" style="float: right;font-size: 0.5em;" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user-circle mt-1 mr-1"></i> ${username}
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                             <a class="dropdown-item" onClick="location.href='./update.html'">Edit Profile</a>
                             <a class="dropdown-item" onclick="sign_out()">Sign out</a>
                         </div>
                     </div>
                 `;
             });
+            document.getElementById("saved_trips_btn").removeAttribute("disabled")
         } else {
             document.getElementById("user").innerHTML = `
                 <div style="float: right;font-size: 0.5em;">
                     <i class="fas fa-user-circle mt-1 mr-1"></i> <a style="color:white;" href="login.html">Login</a>
                 </div>
             `;
+            var att = document.createAttribute("disabled");       // Create a "class" attribute
+            document.getElementById("saved_trips_btn").setAttributeNode(att)
         }
     });
-}
-
-function sign_out() {
-    firebase.auth().signOut().then(function () {
-        alert("You have successfully signed out!");
-    }).catch(function (error) {});
 }
