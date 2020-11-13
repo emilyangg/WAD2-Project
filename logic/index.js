@@ -62,6 +62,7 @@ function display_map_home() {
 	if(markers.length > 0) {
 		clearMarkers();
 	}
+	document.getElementById('carpark_list').innerHTML = `<div id="loading"></div>`;
 	document.getElementById('loading').style.display = "block";
   	var address = document.getElementById("endpoint").value;
 	var destination = convert_geocode(address);
