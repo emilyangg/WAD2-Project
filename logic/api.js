@@ -119,12 +119,35 @@ function sortby_distance(combined_list=window.value['carparks_list']) {
 	clearMarkers(1);
 
 	document.getElementById("carpark_list").innerHTML = '';
+	console.log(combined_list);
 	display_carpark_list(sorted_list);
 }
 
 // Sort carpark list by price
 function sortby_price(combined_list=window.value['carparks_list']) {
 	var sorted_list = combined_list.sort(function(a, b){return a[5]-b[5]});
+	clearMarkers(1);
+
+	document.getElementById("carpark_list").innerHTML = '';
+	display_carpark_list(sorted_list);
+}
+
+// Sort carpark list by available lots
+function sortby_lots(combined_list=window.value['carparks_list']) {
+	var cp_no_lot_avails = [];
+	var cp_lot_avails = []
+
+	for (carpark_list of combined_list) {
+		if (carpark_list[7] == "Data not available") {
+			cp_no_lot_avails.push(carpark_list);
+		} else {
+			carpark_list[7] = parseInt(carpark_list[7]);
+			cp_lot_avails.push(carpark_list);
+		}
+	}
+	var sorted_cp_lot_avails = cp_lot_avails.sort(function(a, b){return b[7]-a[7]})
+
+	var sorted_list = sorted_cp_lot_avails.concat(cp_no_lot_avails);
 	clearMarkers(1);
 
 	document.getElementById("carpark_list").innerHTML = '';
@@ -146,6 +169,7 @@ function display_carpark_list(display_carpark_list) {
 				<div class="dropdown-menu dropdown-menu-right"" aria-labelledby="dropdownMenuButton">
 					<a class="dropdown-item" onclick="sortby_distance()">Distance</a>
 					<a class="dropdown-item" onclick="sortby_price()">Price</a>
+					<a class="dropdown-item" onclick="sortby_lots()">Available Lots</a>
 				</div>
 			</div>
 		</div>
