@@ -33,19 +33,23 @@
 
     <!-- Custom JavaScript -->
     <script src="logic/signup.js"></script>
+    <script src="logic/login.js"></script>
     <link rel="stylesheet" href="view/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@900&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/96c80c29ff.js" crossorigin="anonymous"></script>
 
     <title>Edit Profile</title>
   </head>
-  <body>
+  <body onload="edit_profile()">
+        <div id= "logoName" style = "color:white; background-color: black; text-align: center; font-family: 'Merriweather', serif; font-size: 1.5em; padding: 1em;"> WhereToPark  <i class="fas fa-car"></i> </div>
         <div class="container">
             <div class="card mx-auto my-5" style="width: 18rem;">
                 <div class="card-body">
-                    <h5 class="card-title lead text-center">Sign Up</h5>
+                    <h5 class="card-title lead text-center">Edit Profile</h5>
                     <form id="editProfileForm" class="mt-4">
                         <div class="form-label-group">
-                            <input type="text" class="form-control" id="name" placeholder="Name" required autofocus>
-                            <label for="name">Name</label>
+                            <input type="text" class="form-control" id="username" placeholder="Name" required autofocus>
+                            <label for="username">Username</label>
                         </div>
                         <div class="form-label-group">
                             <input type="email" class="form-control" id="email" placeholder="Email address" required autofocus>
@@ -55,7 +59,7 @@
                             <input type="password" class="form-control" id="password" placeholder="Password" required autofocus>
                             <label for="password">Password</label>
                         </div>
-                        <button type="button" class="btn btn-block btn-primary" onClick="sign_up()">Sign Up</button>
+                        <button type="button" class="btn btn-block btn-primary" onClick="update_profile()">Update Profile/button>
                     </form>
                 </div>
               </div>

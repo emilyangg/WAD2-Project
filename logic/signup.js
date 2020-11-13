@@ -1,6 +1,6 @@
 // Sign up for an account
 function sign_up() {
-    var name = document.getElementById('name').value;
+    var username = document.getElementById('username').value;
     var email = document.getElementById('email').value;
     var pwd = document.getElementById('password').value;
 
@@ -9,7 +9,7 @@ function sign_up() {
             uid = user.user.uid;
         }
         firebase.database().ref('users/' + uid).set({
-            username: name,
+            username: username,
             email: email,
             saved_trips: ""
         });
