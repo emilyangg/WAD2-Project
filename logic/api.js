@@ -226,9 +226,28 @@ function display_carpark_list(display_carpark_list) {
 				</div>
 
 				<div class="btn-group mt-1">
-					<button type="button" class="btn btn-primary" onclick="view_fullrates('${carpark_list_counter}')">
+					<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="view_fullrates(${carpark_list_counter})">
 						View Full Rates
 					</button>
+				</div>
+				
+				<div class="modal fade bd-example-modal-lg " role="dialog" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="container-fluid">
+								<div class="row">
+									<div class="col-lg-12">
+										<div class="modal-body" id="modalcontent">
+										
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</li>
 		`;
@@ -268,6 +287,71 @@ function view_fullrates(carpark_index) {
 	carpark_index = parseInt(carpark_index);
 	var selected_carpark = window.value['carparks_list'][carpark_index-1];
 	var fullrates = selected_carpark[9];
+	var modal_contents = `
+	<table class="table table-striped table-bordered table-responsive-xl">
+		<thead>
+			<tr>
+				<th scope="col">Start Time</th>
+				<th scope="col">End Time</th>
+				<th scope="col">Weekday Interval (mins)</th>
+				<th scope="col">Weekday Rates ($)</th>
+				<th scope="col">Saturday Interval (mins)</th>
+				<th scope="col">Saturday Rates ($)</th>
+				<th scope="col">Sunday Interval (mins)</th>
+				<th scope="col">Sunday Rates ($)</th>
+			</tr>
+		</thead>
+		<tbody>`;
 	console.log(selected_carpark);
 	console.log(fullrates);
+	for (obj of fullrates) {
+		var wd_rates_color = "color: ";
+		if (obj.weekdayRates <= 1) {
+			wd_rates_color += "green";
+		}
+		else if (obj.weekdayRates <= 2) {
+			wd_rates_color += "orange";
+		}
+		else {
+			wd_rates_color += "red";
+		}
+
+		var sat_rates_color = "color: ";
+		if (obj.satRates <= 1) {
+			sat_rates_color += "green";
+		}
+		else if (obj.satRates <= 2) {
+			sat_rates_color += "orange";
+		}
+		else {
+			sat_rates_color += "red";
+		}
+
+		var sun_rates_color = "color: ";
+		if (obj.sunRates <= 1) {
+			sun_rates_color += "green";
+		}
+		else if (obj.sunRates <= 2) {
+			sun_rates_color += "orange";
+		}
+		else {
+			sun_rates_color += "red";
+		}
+
+		modal_contents += 
+		`<tr>
+			<td scope="col">${obj.start}</td>
+			<td scope="col">${obj.end}</td>
+			<td scope="col">${obj.weekdayInterval}</td>
+			<td scope="col"><span style="${wd_rates_color}">${obj.weekdayRates}</span></td>
+			<td scope="col">${obj.satInterval}</td>
+			<td scope="col"><span style="${sat_rates_color}">${obj.satRates}</span></td>
+			<td scope="col">${obj.sunInterval}</td>
+			<td scope="col"><span style="${sun_rates_color}">${obj.sunRates}</span></td>
+		</tr>`
+	};
+	modal_contents += `
+		</tbody>
+	</table>`;
+	document.getElementById("modalcontent").innerHTML = modal_contents;
 }
