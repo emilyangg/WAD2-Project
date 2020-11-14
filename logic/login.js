@@ -117,11 +117,11 @@ function display_saved() {
                     var end_location = saved_trips[trip]["end_location"];
                     saved_list += `
                         <li class="list-group-item">
-                            <span class="font-weight-bold">${trip_name}</span><br>
+                            <span class="font-weight-bold">${trip_name}</span>
+                            <span style="float:right"><i class="far fa-edit" onclick="edit_trip('${trip}','${trip_name}','${start_location}','${end_location}')"></i>
+                            <i class="far fa-trash-alt" onclick="delete_trip('${trip}')"></i></span><br>
                             <span>Start Location: ${start_location}</span><br>
                             <span>End Location: ${end_location}</span><br>
-                            <i class="far fa-edit" onclick="edit_trip('${trip}','${trip_name}','${start_location}','${end_location}')"></i>
-                            <i class="far fa-trash-alt" onclick="delete_trip('${trip}')"></i> 
                             <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${end_location}')">Nearby Carparks</button>
                             <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${start_location}','${end_location}')">Find Routes</button>
                         </li>
@@ -209,97 +209,36 @@ function sign_out() {
     }).catch(function (error) {});
 }
 
-function edit_profile() {
+// Display user information
+function my_profile() {
     firebase.auth().onAuthStateChanged(function (user) {
         if (user) {
             var userId = user.uid;
+            var email = user.email;
 
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
-                document.getElementById("username").value = snapshot.val().username;
+                document.getElementById("username").innerText = snapshot.val().username;
             })
 
-            var email = user.email;
-            var password = user.password;
-            document.getElementById("email").value = email;
-            document.getElementById("old_pwd").value = password;
-            document.getElementById("password").value = password;
+            document.getElementById("email").innerText = email;
         }
     });
 }
 
-function update_profile() {
-    var username = document.getElementById("username").value;
-    var email = document.getElementById("email").value;
-    var password = document.getElementById("password").value;
-    var old_pwd = document.getElementById("old_pwd").value;
 
-    var user = firebase.auth().currentUser;
-
-    if (user) {
-        var userId = user.uid;
-        var user_email = user.email;
-        var email_update = "";
-        var pwd_update = "";
-        
-        var credential = firebase.auth.EmailAuthProvider.credential(
-            user_email,
-            old_pwd
-        );
-
-        user.reauthenticateWithCredential(credential).then(function() {
-            // User re-authenticated.
-            user.updateEmail(email).then(function() {
-                // Update successful.
-                email_update = true;
-            }).catch(function(error) {
-                // An error happened.
-                email_update = false;
-                console.log("Update email: ", error);
-            });
-    
-            user.updatePassword(password).then(function() {
-                // Update successful.
-                pwd_update = true;
-            }).catch(function(error) {
-                // An error happened.
-                pwd_update = false;
-                console.log("Update password: ", error);
-            });
-
-            var updates = {};
-            updates['/users/' + userId + '/username/'] = username;
-            updates['/users/' + userId + '/email/'] = email;
-            firebase.database().ref().update(updates);
-    
-            if (email_update && pwd_update) {
-                window.location.href = "index.html";
-            } else {
-                document.getElementById("message").innerHTML = `
-                    <div class="alert alert-danger" role="alert">
-                        There was an error updating your profile! Try again!
-                    </div>
-                `;
-            }
-          }).catch(function(error) {
-            // An error happened.
-            console.log("Reauthenticate: ", error)
-          })        
-    }
-    
-}
-
+// Send user password reset email
 function send_password_reset() {
     var auth = firebase.auth();
     var emailAddress = document.getElementById("email").value
 
-    var actionCodeSettings = {
-        // After password reset, the user will be give the ability to go back
-        // to this page.
-        url: 'login.html',
-        handleCodeInApp: false
-    };
+    // var actionCodeSettings = {
+    //     // After password reset, the user will be give the ability to go back
+    //     // to this page.
+    //     url: 'login.html',
+    //     handleCodeInApp: false
+    // };
 
-    auth.sendPasswordResetEmail(emailAddress, actionCodeSettings).then(function() {
+    auth.sendPasswordResetEmail(emailAddress).then(function() {
         // Email sent.
         document.getElementById("message").innerHTML = `
             <div class="alert alert-success" role="alert">

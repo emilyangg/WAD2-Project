@@ -3,17 +3,11 @@
 
 // Prompt users to enter location to generate route
 function prepare_generate_route(endpoint) {
-	console.log(endpoint);
     document.getElementById("endpoint").value = endpoint;
     document.getElementById("endButton").innerHTML = "";
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
-<<<<<<< Updated upstream
-			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint" >
-			
-=======
 			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
->>>>>>> Stashed changes
 		</div>	
 	`;
 	document.getElementById("use_current_location").innerHTML = `
@@ -108,5 +102,6 @@ function scrollFunction() {
 
 // When the user clicks on the button, scroll to the top of the document
 function topFunction() {
-  document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+  document.documentElement.scrollTop = 0;
+  document.getElementById('menu').scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
