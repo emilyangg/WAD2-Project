@@ -13,7 +13,7 @@ function prepare_generate_route(endpoint) {
 	`;
 	document.getElementById("use_current_location").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
-			<button type="button" class="btn btn-secondary" style="width=100%"; onclick="getGeoLocation()">
+			<button type="button" class="btn btn-secondary" style="width=100%" onclick="getGeoLocation()">
 				Use Current Location 
 				<i class="fas fa-location-arrow"></i>
 			</button>
