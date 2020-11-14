@@ -2,8 +2,9 @@
 // This file will also contain the functions that write into HTML elements
 
 // Prompt users to enter location to generate route
-function prepare_generate_route(endpoint) {
-    document.getElementById("endpoint").value = endpoint;
+function prepare_generate_route(carpark) {
+	var destination = document.getElementById("endpoint").value;
+    document.getElementById("endpoint").value = carpark;
     document.getElementById("endButton").innerHTML = "";
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
@@ -19,6 +20,7 @@ function prepare_generate_route(endpoint) {
 		</div>
 	`;
 	document.getElementById("generate_route").innerHTML = `
+		<input type='hidden' id='destination' value='${destination}'>
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
 				<button type="button" class="btn btn-block btn-success" style="display: inline" onclick="generate_route()">
@@ -31,10 +33,12 @@ function prepare_generate_route(endpoint) {
 
 	document.getElementById("carpark_list").innerHTML = ""; 
 	document.getElementById("saved_trips_buttons").innerHTML += `
-		<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal">
-			Save this trip
-			<i class="fas fa-save"></i>
-		</button>
+		<div class="mt-3" id="save_this_trip">
+			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal">
+				Save this trip
+				<i class="fas fa-save"></i>
+			</button>
+		</div>
 
 		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">

@@ -70,7 +70,7 @@ function save_this_trip() {
         var start_lng = startPoint["lng"];
 	}
 
-	var endLocation = document.getElementById("endpoint").value;
+	var endLocation = document.getElementById("destination").value;
     var endPoint = convert_geocode(endLocation);
     var end_lat = endPoint["lat"];
     var end_lng = endPoint["lng"];
@@ -93,9 +93,9 @@ function save_this_trip() {
                     end_lat: end_lat,
                     end_lng: end_lng
                 });
+                alert("Your trip has been saved!");
+                display_saved();
             });
-            alert("Your trip has been saved!");
-            display_saved();
         }
     });
 }
@@ -224,7 +224,6 @@ function my_profile() {
         }
     });
 }
-
 
 // Send user password reset email
 function send_password_reset() {

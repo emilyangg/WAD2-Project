@@ -2,6 +2,7 @@ window.value = {};
 
 // Call carpark API in read.php
 function call_carpark_api(lat, lng) {
+	document.getElementById("saved_list").innerHTML = "";
 	var request = new XMLHttpRequest();
 
 	request.onreadystatechange = function() {
@@ -156,7 +157,6 @@ function sortby_lots(combined_list=window.value['carparks_list']) {
 
 // Display list of carparks nearby
 function display_carpark_list(display_carpark_list) {
-
 	var carpark_display_str = `
 		<div class="d-flex">
 			<div class="mt-1">
@@ -226,6 +226,17 @@ function display_carpark_list(display_carpark_list) {
 // Find nearby carpark based on the saved trip
 function findNearbyCarpark(end_location) {
 	document.getElementById("endpoint").value = end_location;
+	document.getElementById("endButton").innerHTML = `
+		<span id="endButton" class="input-group-append">
+			<button  type="button" class=" btn btn-info" onclick="display_map_home()">
+				Enter
+			</button>
+		</span>
+	`;
+	document.getElementById("startpoint_input").innerHTML = "";
+	document.getElementById("use_current_location").innerHTML = "";
+	document.getElementById("generate_route").innerHTML = "";
+	document.getElementById("save_this_trip").innerHTML = "";
 	document.getElementById("saved_list").innerHTML = "";
 	display_map_home()
 }
