@@ -290,7 +290,7 @@ function view_fullrates(carpark_index) {
 	var selected_carpark = window.value['carparks_list'][carpark_index-1];
 	var fullrates = selected_carpark[9];
 	var modal_contents = `
-	<table class="table table-striped table-bordered table-responsive-xl">
+	<table style="overflow-x: auto;" class="table table-striped table-bordered table-responsive-xl">
 		<thead>
 			<tr>
 				<th scope="col">Start Time</th>
