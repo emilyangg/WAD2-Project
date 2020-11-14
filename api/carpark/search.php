@@ -10,6 +10,7 @@ require_once 'getHDBnearest.php';
 // $lat = 1.2949;
 // $lng = 103.6305;
 
+// Receive destination latitude and longitude using get from client
 $lat = isset($_GET["lat"]) ? $_GET["lat"] : "";
 $lng = isset($_GET["lng"]) ? $_GET["lng"] : "";
 $results = [];

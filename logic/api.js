@@ -49,6 +49,8 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
 		var avail_lots = carpark_obj[carpark].LotAvail;
 		var avail_lots_color = "color: ";
 
+		var fullrates = carpark_obj[carpark].FullRates;
+
 		if (avail_lots < 11) {
             avail_lots_color += "red";
     	}
@@ -68,7 +70,7 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
 		else {
 			rates_color += "red";
 		}
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color,fullrates])
 
 	}
 
@@ -86,10 +88,12 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 		var rates = carpark_obj[carpark]["Rates"];
 		var rates_float = parseFloat(rates.slice(1,rates.length));
 		var rates_color =  "color: ";
-		var charge_interval = "30 mins";
+		var charge_interval = carpark_obj[carpark]["ChargingInterval"];
 		
 		var avail_lots = carpark_obj[carpark]["Lots Available"];
 		var avail_lots_color = "color: ";
+
+		var fullrates = carpark_obj[carpark]["FullRates"];
 
 		if (avail_lots < 11) {
             avail_lots_color += "red";
@@ -116,7 +120,7 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 			avail_lots_color = "color: blue"
 		}
 
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color,fullrates])
 	}
 	
 	return carpark_list
@@ -182,7 +186,6 @@ function display_carpark_list(display_carpark_list) {
 				</div>
 			</div>
 		</div>
-		
 		<ul class="list-group my-2">
 	`;
 	carpark_list_counter = 0;
@@ -217,6 +220,12 @@ function display_carpark_list(display_carpark_list) {
 						Locate Carpark
 					</button>
 				</div>
+				
+				<div class="btn-group mt-1">
+					<button type="button" class="btn btn-primary" onclick="view_fullrates('${carpark_list_counter}')">
+						View Full Rates
+					</button>
+				</div>
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
@@ -237,4 +246,11 @@ function findNearbyCarpark(end_location) {
 	document.getElementById("endpoint").value = end_location;
 	document.getElementById("saved_list").innerHTML = "";
 	display_map_home()
+}
+
+function view_fullrates(carpark_index) {
+	carpark_index = parseInt(carpark_index);
+	var selected_carpark = window.value['carparks_list'][carpark_index];
+	var fullrates = carpark[9];
+	console.log(fullrates);
 }

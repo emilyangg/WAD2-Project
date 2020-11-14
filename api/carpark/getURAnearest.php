@@ -27,6 +27,7 @@ function getNearestURACP($lat, $long){
     // Carpark No: A0011, Address: ARMENIAN STREET OFF STREET, Rates: $1.20, parkCapacity: 45, startTime: 07.00 AM, endTime: 11.00 AM
     $URA_details_url = "https://www.ura.gov.sg/uraDataService/invokeUraDS?service=Car_Park_Details";
     $URA_details = call_ura_api($URA_details_url);
+
     $details_arr = $URA_details['Result'];
 
     // Associative array of nearby carparks and their details (coordinates, lots availability + ADDRESS and RATES)
@@ -48,7 +49,7 @@ function clean_ura_avail($avails_arr,$in_e,$in_n,$range) {
     $destin_lat = $destin_latlon['latitude'];
     $destin_lon = $destin_latlon['longitude'];
 
-    for ($i=3;$i<count($avails_arr);$i++) {
+    for ($i=0;$i<count($avails_arr);$i++) {
         $this_lot_type = $avails_arr[$i]['lotType'];
 
         if ($this_lot_type == 'C') {
@@ -71,7 +72,6 @@ function clean_ura_avail($avails_arr,$in_e,$in_n,$range) {
 
                     $this_rel_dist_km = LatLonToDistance($destin_lat,$destin_lon,$this_lat,$this_long);
 
-                    //$out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails];
                     $out_assoc_arr[$this_cp_num] = [$this_lat,$this_long,$this_lot_avails,$this_rel_dist_km];
                 }
             }
@@ -93,32 +93,78 @@ function LinkAvailAndDetails($clean_cpno, $details_arr){
         // If lot type is Car and cpNo is nearby
         if ($this_lot_type == 'Car' && array_key_exists($this_cpNo, $clean_cpno)) {
 
-            $this_address = $details_arr[$i]['ppName'];
-            $this_wkday_rates = $details_arr[$i]['weekdayRate'];
-            $this_sat_rates = $details_arr[$i]['satdayRate'];
-            $this_sun_rates = $details_arr[$i]['sunPHRate'];
+            if (!array_key_exists($this_cpNo,$out_assoc_arr)) {
+                $this_address = $details_arr[$i]['ppName'];
+                $this_wkday_rates = $details_arr[$i]['weekdayRate'];
+                $this_charging_interval = $details_arr[$i]['weekdayMin'];
 
-            $this_charging_interval = $details_arr[$i]['weekdayMin'];
+                $this_sat_rates = $details_arr[$i]['satdayRate'];
+                $this_sat_interval = $details_arr[$i]['satdayMin'];
 
-            $this_latitude = $clean_cpno[$this_cpNo][0];
-            $this_longitude = $clean_cpno[$this_cpNo][1];
-            $this_lot_avail = $clean_cpno[$this_cpNo][2];
+                $this_sun_rates = $details_arr[$i]['sunPHRate'];
+                $this_sun_interval = $details_arr[$i]['sunPHMin'];
+                
+                $this_latitude = $clean_cpno[$this_cpNo][0];
+                $this_longitude = $clean_cpno[$this_cpNo][1];
+                $this_lot_avail = $clean_cpno[$this_cpNo][2];
+                $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
+                
+                $start_time = convert_time($details_arr[$i]['startTime']);
+                $end_time = convert_time($details_arr[$i]['endTime']);
 
-            $this_dist_to_dest = $clean_cpno[$this_cpNo][3];
-            
+                $this_full_rates = [
+                    [
+                        'start' => $start_time,
+                        'end' => $end_time,
+                        'weekdayRates' => $this_wkday_rates,
+                        'weekdayInterval' => $this_charging_interval,
+                        'satRates' => $this_sat_rates, 
+                        'satInterval' => $this_sat_interval,
+                        'sunRates' => $this_sun_rates,
+                        'sunInterval' => $this_sun_interval
+                    ]
+                ];
+                
 
-            $out_assoc_arr[$this_cpNo] = [
-                "Address" => $this_address, 
-                "WeekdayRates" => $this_wkday_rates, 
-                "SatRates" => $this_sat_rates, 
-                "Sun/PHRates" => $this_sun_rates,
-                "Latitude" => $this_latitude, 
-                "Longitude" => $this_longitude, 
-                "LotAvail" => $this_lot_avail,
+                $out_assoc_arr[$this_cpNo] = [
+                    "Address" => $this_address, 
+                    "WeekdayRates" => $this_wkday_rates, 
+                    "SatRates" => $this_sat_rates, 
+                    "Sun/PHRates" => $this_sun_rates,
+                    "Latitude" => $this_latitude, 
+                    "Longitude" => $this_longitude, 
+                    "LotAvail" => $this_lot_avail,
+                    "DistToDest" => $this_dist_to_dest,
+                    "ChargingInterval" => $this_charging_interval,
 
-                "DistToDest" => $this_dist_to_dest,
-                "ChargingInterval" => $this_charging_interval
-            ];
+                    "FullRates" => $this_full_rates
+                ];
+            } elseif (array_key_exists($this_cpNo,$out_assoc_arr)) {
+                $this_wkday_rates = $details_arr[$i]['weekdayRate'];
+                $this_charging_interval = $details_arr[$i]['weekdayMin'];
+
+                $this_sat_rates = $details_arr[$i]['satdayRate'];
+                $this_sat_interval = $details_arr[$i]['satdayMin'];
+
+                $this_sun_rates = $details_arr[$i]['sunPHRate'];
+                $this_sun_interval = $details_arr[$i]['sunPHMin'];
+
+                $start_time = convert_time($details_arr[$i]['startTime']);
+                $end_time = convert_time($details_arr[$i]['endTime']);
+
+                $this_full_rates = [
+                    'start' => $start_time,
+                    'end' => $end_time,
+                    'weekdayRates' => $this_wkday_rates,
+                    'weekdayInterval' => $this_charging_interval,
+                    'satRates' => $this_sat_rates, 
+                    'satInterval' => $this_sat_interval,
+                    'sunRates' => $this_sun_rates,
+                    'sunInterval' => $this_sun_interval
+                ];
+
+                array_push($out_assoc_arr[$this_cpNo]["FullRates"],$this_full_rates);
+            }
         }
     }
 
@@ -142,4 +188,32 @@ function LatLonToDistance($lat1, $lon1, $lat2, $lon2) {
         }
     }
 
+// Converts string time to integer 2400h format
+function convert_time($time_str) {
+    $hours = substr($time_str,0,2);
+    $minutes = substr($time_str,3,2);
+
+    if (strpos($time_str, 'AM') && $hours == '12') {
+        $hm_str = '00'.$minutes.'H';
+
+    } elseif (strpos($time_str, 'PM') && $hours == '12') {
+        $hm_str = '12' . $minutes . 'H';
+
+    }elseif (strpos($time_str, 'AM')) {  
+
+        $hm_str = $hours . $minutes . 'H';
+
+    } elseif (strpos($time_str, 'PM')) {
+        
+        $int_h = intval($hours) + 12;
+        $hm_str = strval($int_h) . $minutes . 'H';
+
+    } else {
+        $hm_str = '0000H';
+    }
+
+    return $hm_str;
+}
+
 ?>
+
