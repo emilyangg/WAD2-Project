@@ -79,13 +79,13 @@ function save_this_trip() {
         if (user) {
             var userId = user.uid;
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
-                // var no_of_trips = snapshot.val().no_of_trips + 1;
-                // var updates = {};
-                // updates['/users/' + userId + '/no_of_trips/'] = no_of_trips;
+                var no_of_trips = snapshot.val().no_of_trips + 1;
+                var updates = {};
+                updates['/users/' + userId + '/no_of_trips/'] = no_of_trips;
 
-                // firebase.database().ref().update(updates);
-
-                firebase.database().ref('users/' + userId + '/saved_trips/' + trip_name).set({
+                firebase.database().ref().update(updates);
+                firebase.database().ref('users/' + userId + '/saved_trips/trip' + no_of_trips + '/').set({
+                    name: trip_name,
                     start_location: startLocation,
                     start_lat: start_lat,
                     start_lng: start_lng,
@@ -95,6 +95,7 @@ function save_this_trip() {
                 });
             });
             alert("Your trip has been saved!");
+            display_saved();
         }
     });
 }
@@ -111,18 +112,19 @@ function display_saved() {
             firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
                 var saved_trips = snapshot.val().saved_trips;
                 for (trip in saved_trips) {
+                    var trip_name = saved_trips[trip]["name"];
                     var start_location = saved_trips[trip]["start_location"];
                     var end_location = saved_trips[trip]["end_location"];
                     saved_list += `
-                        <li class="list-group-item" id="${trip}_info">
-                            <span class="font-weight-bold">${trip}</span><br>
+                        <li class="list-group-item">
+                            <span class="font-weight-bold">${trip_name}</span><br>
                             <span>Start Location: ${start_location}</span><br>
                             <span>End Location: ${end_location}</span><br>
-                            <i class="far fa-edit" onclick="edit_trip('${start_location}','${end_location}')"></i> 
+                            <i class="far fa-edit" onclick="edit_trip('${trip}','${trip_name}','${start_location}','${end_location}')"></i>
+                            <i class="far fa-trash-alt" onclick="delete_trip('${trip}')"></i> 
                             <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${end_location}')">Nearby Carparks</button>
                             <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${start_location}','${end_location}')">Find Routes</button>
                         </li>
-                        
                     `;
                 }
                 saved_list += `
@@ -134,23 +136,68 @@ function display_saved() {
     });
 }
 
-// Edit Trip
-function edit_trip(start_location, end_location) {
+// Edit the selected trip
+function edit_trip(trip, trip_name, start_location, end_location) {
     document.getElementById("saved_list").innerHTML = `
         <h4>Edit Trip</h4>
         <div class="card">
             <div class="card-body">
                 <div class="form-group">
-                    <label for="start_location_edit">Start Location</label>
-                    <input type="text" class="form-control" id="start_location_edit" value="${start_location}">
+                    <label for="edit_trip_name">Trip Name</label>
+                    <input type="text" class="form-control" id="edit_trip_name" value="${trip_name}">
                 </div>
                 <div class="form-group">
-                    <label for="end_location_edit">End Location</label>
-                    <input type="text" class="form-control" id="end_location_edit" value="${end_location}">
+                    <label for="edit_start_location">Start Location</label>
+                    <input type="text" class="form-control" id="edit_start_location" value="${start_location}">
                 </div>
+                <div class="form-group">
+                    <label for="edit_end_location">End Location</label>
+                    <input type="text" class="form-control" id="edit_end_location" value="${end_location}">
+                </div>
+                <button type="button" class="btn btn-primary" onclick="update_trip('${trip}')">Save</button>
             </div>
         </div>	
     `;
+}
+
+// Update trip based on user input
+function update_trip(trip) {
+    var trip_name = document.getElementById("edit_trip_name").value;
+    var new_start_location = document.getElementById("edit_start_location").value;
+    var new_end_location = document.getElementById("edit_end_location").value;
+
+    var startPoint = convert_geocode(new_start_location);
+    var start_lat = startPoint["lat"];
+    var start_lng = startPoint["lng"];
+
+    var endPoint = convert_geocode(new_end_location);
+    var end_lat = endPoint["lat"];
+    var end_lng = endPoint["lng"];
+    
+    var user = firebase.auth().currentUser;
+    if (user) {
+        var userId = user.uid;
+        var updates = {};
+        updates['/users/' + userId + '/saved_trips/' + trip + '/name/'] = trip_name;
+        updates['/users/' + userId + '/saved_trips/' + trip + '/start_location/'] = new_start_location;
+        updates['/users/' + userId + '/saved_trips/' + trip + '/start_lat/'] = start_lat;
+        updates['/users/' + userId + '/saved_trips/' + trip + '/start_lng/'] = start_lng;
+        updates['/users/' + userId + '/saved_trips/' + trip + '/end_location/'] = new_end_location;
+        updates['/users/' + userId + '/saved_trips/' + trip + '/end_lat/'] = end_lat;
+        updates['/users/' + userId + '/saved_trips/' + trip + '/end_lng/'] = end_lng;
+        firebase.database().ref().update(updates);
+        display_saved();
+    }
+}
+
+// Delete the selected trip
+function delete_trip(trip) {
+    var user = firebase.auth().currentUser;
+    if (user) {
+        var userId = user.uid;
+        firebase.database().ref('/users/' + userId + '/saved_trips/' + trip).remove()
+        display_saved();
+    }
 }
 
 // Sign out of user account
@@ -158,4 +205,114 @@ function sign_out() {
     firebase.auth().signOut().then(function () {
         
     }).catch(function (error) {});
+}
+
+function edit_profile() {
+    firebase.auth().onAuthStateChanged(function (user) {
+        if (user) {
+            var userId = user.uid;
+
+            firebase.database().ref('/users/' + userId).once('value').then(function (snapshot) {
+                document.getElementById("username").value = snapshot.val().username;
+            })
+
+            var email = user.email;
+            var password = user.password;
+            document.getElementById("email").value = email;
+            document.getElementById("password").value = password;
+        }
+    });
+}
+
+function update_profile() {
+    // var username = document.getElementById("username").value;
+    // var email = document.getElementById("email").value;
+    // var password = document.getElementById("password").value;
+
+    var user = firebase.auth().currentUser;
+    // console.log(user);
+
+    if (user) {
+        var user_email = user.email;
+        var user_pwd = user.password;
+        firebase.auth().signInWithEmailAndPassword(user_email, user_pwd).then(function () {
+            user.updateEmail(email).then(function() {
+                // Update successful.
+                email_update = true;
+            }).catch(function(error) {
+                // An error happened.
+                email_update = false;
+                console.log("Update email:", error);
+            });
+    
+            user.updatePassword(password).then(function() {
+                // Update successful.
+                pwd_update = true;
+            }).catch(function(error) {
+                // An error happened.
+                pwd_update = false;
+                console.log("Update password:", error);
+            });
+    
+            if (email_update && pwd_update) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById("message").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        There was an error updating your profile! Try again!
+                    </div>
+                `;
+            }
+        });
+        // var credential = {
+        //     email: user_email,
+        //     password: user_pwd
+        // }
+        var credential = firebase.auth.EmailAuthProvider.credential(
+            user_email,
+            user_pwd
+        );
+        // console.log(credential)
+        // user.reauthenticateWithCredential(credential).then(function() {
+        //     // User re-authenticated.
+        //     console.log("hi")
+        //   }).catch(function(error) {
+        //     // An error happened.
+        //     console.log(error)
+        //   });
+        // var userId = user.uid;
+        // var updates = {};
+        // updates['/users/' + userId + '/username/'] = username;
+        // updates['/users/' + userId + '/email/'] = email;
+        // firebase.database().ref().update(updates);
+
+        // var email_update = "";
+        // var pwd_update = "";
+
+        
+    }
+    
+}
+
+function send_password_reset() {
+    var auth = firebase.auth();
+    var emailAddress = document.getElementById("email").value
+
+    var actionCodeSettings = {
+        // After password reset, the user will be give the ability to go back
+        // to this page.
+        url: 'login.html',
+        handleCodeInApp: false
+    };
+
+    auth.sendPasswordResetEmail(emailAddress, actionCodeSettings).then(function() {
+        // Email sent.
+        document.getElementById("message").innerHTML = `
+            <div class="alert alert-success" role="alert">
+                An email has been sent to your email address!
+            </div>
+        `;
+    }).catch(function(error) {
+        // An error happened.
+    });
 }
