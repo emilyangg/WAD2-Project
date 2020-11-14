@@ -277,7 +277,9 @@ function findNearbyCarpark(end_location) {
 	document.getElementById("startpoint_input").innerHTML = "";
 	document.getElementById("use_current_location").innerHTML = "";
 	document.getElementById("generate_route").innerHTML = "";
-	document.getElementById("save_this_trip").innerHTML = "";
+	if (document.getElementById("save_this_trip") != null){
+		document.getElementById("save_this_trip").innerHTML = "";
+	}
 	document.getElementById("saved_list").innerHTML = "";
 	display_map_home()
 }
