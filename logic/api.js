@@ -220,6 +220,7 @@ function display_carpark_list(display_carpark_list) {
 	document.getElementById("carpark_info").innerHTML = "";
 	document.getElementById("route_list").innerHTML = "";
 	document.getElementById("route_info").innerHTML = "";
+	document.getElementById("saved_list").innerHTML = "";
 }
 
 // Find nearby carpark based on the saved trip
