@@ -1,15 +1,19 @@
 // This is the main file that interacts with the html file and imports functions from the other files
 // This file will also contain the functions that write into HTML elements
 
-// Prompt users to enter starting location for generation of route
+// Prompt users to enter location to generate route
 function prepare_generate_route(endpoint) {
 	console.log(endpoint);
     document.getElementById("endpoint").value = endpoint;
     document.getElementById("endButton").innerHTML = "";
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
+<<<<<<< Updated upstream
 			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint" >
 			
+=======
+			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
+>>>>>>> Stashed changes
 		</div>	
 	`;
 	document.getElementById("use_current_location").innerHTML = `

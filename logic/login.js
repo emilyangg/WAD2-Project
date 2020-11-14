@@ -129,8 +129,10 @@ function display_saved() {
                 }
                 saved_list += `
                     </ul>
-                `;
-                document.getElementById("saved_list").innerHTML = saved_list; 
+                `; 
+                document.getElementById("saved_list").innerHTML = saved_list;
+                document.getElementById("carpark_list").innerHTML = "";
+                document.getElementById("route_list").innerHTML = "";
             });
         }
     });
@@ -219,30 +221,40 @@ function edit_profile() {
             var email = user.email;
             var password = user.password;
             document.getElementById("email").value = email;
+            document.getElementById("old_pwd").value = password;
             document.getElementById("password").value = password;
         }
     });
 }
 
 function update_profile() {
-    // var username = document.getElementById("username").value;
-    // var email = document.getElementById("email").value;
-    // var password = document.getElementById("password").value;
+    var username = document.getElementById("username").value;
+    var email = document.getElementById("email").value;
+    var password = document.getElementById("password").value;
+    var old_pwd = document.getElementById("old_pwd").value;
 
     var user = firebase.auth().currentUser;
-    // console.log(user);
 
     if (user) {
+        var userId = user.uid;
         var user_email = user.email;
-        var user_pwd = user.password;
-        firebase.auth().signInWithEmailAndPassword(user_email, user_pwd).then(function () {
+        var email_update = "";
+        var pwd_update = "";
+        
+        var credential = firebase.auth.EmailAuthProvider.credential(
+            user_email,
+            old_pwd
+        );
+
+        user.reauthenticateWithCredential(credential).then(function() {
+            // User re-authenticated.
             user.updateEmail(email).then(function() {
                 // Update successful.
                 email_update = true;
             }).catch(function(error) {
                 // An error happened.
                 email_update = false;
-                console.log("Update email:", error);
+                console.log("Update email: ", error);
             });
     
             user.updatePassword(password).then(function() {
@@ -251,8 +263,13 @@ function update_profile() {
             }).catch(function(error) {
                 // An error happened.
                 pwd_update = false;
-                console.log("Update password:", error);
+                console.log("Update password: ", error);
             });
+
+            var updates = {};
+            updates['/users/' + userId + '/username/'] = username;
+            updates['/users/' + userId + '/email/'] = email;
+            firebase.database().ref().update(updates);
     
             if (email_update && pwd_update) {
                 window.location.href = "index.html";
@@ -263,33 +280,10 @@ function update_profile() {
                     </div>
                 `;
             }
-        });
-        // var credential = {
-        //     email: user_email,
-        //     password: user_pwd
-        // }
-        var credential = firebase.auth.EmailAuthProvider.credential(
-            user_email,
-            user_pwd
-        );
-        // console.log(credential)
-        // user.reauthenticateWithCredential(credential).then(function() {
-        //     // User re-authenticated.
-        //     console.log("hi")
-        //   }).catch(function(error) {
-        //     // An error happened.
-        //     console.log(error)
-        //   });
-        // var userId = user.uid;
-        // var updates = {};
-        // updates['/users/' + userId + '/username/'] = username;
-        // updates['/users/' + userId + '/email/'] = email;
-        // firebase.database().ref().update(updates);
-
-        // var email_update = "";
-        // var pwd_update = "";
-
-        
+          }).catch(function(error) {
+            // An error happened.
+            console.log("Reauthenticate: ", error)
+          })        
     }
     
 }
