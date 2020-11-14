@@ -25,7 +25,32 @@ function sign_up() {
                     </div>
                 `;
             }
-        });
+        }).catch(function (error) {
+            //Contains all Authentication Error Code
+            switch (error.code) {
+            case "auth/email-already-in-use":
+                document.getElementById("message").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        There already exists an account with the given email address.
+                    </div>
+                `;
+                break;
+            case "auth/invalid-email":
+                document.getElementById("message").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        The email you have entered is not valid.
+                    </div>
+                `;
+                break;
+            case "auth/weak-password":
+                document.getElementById("message").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        The password is too weak.
+                    </div>
+                `;
+                break;
+            }
+        });;
     });
 }
 

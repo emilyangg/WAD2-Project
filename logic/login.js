@@ -23,10 +23,9 @@ function login() {
             case "auth/invalid-email":
                 document.getElementById("message").innerHTML = `
                     <div class="alert alert-danger" role="alert">
-                        The E-Mail/Password you have entered is not valid.
+                        The email you have entered is not valid.
                     </div>
                 `;
-                console.log("Invalid email");
                 break;
             case "auth/user-disabled":
                 document.getElementById("message").innerHTML = `
@@ -34,7 +33,6 @@ function login() {
                         Account is disabled, please contact the admin.
                     </div>
                 `;
-                console.log("Account disabled");
                 break;
             case "auth/user-not-found":
                 document.getElementById("message").innerHTML = `
@@ -42,15 +40,13 @@ function login() {
                         The user is not found.
                     </div>
                 `;
-                console.log("User not found");
                 break;
             case "auth/wrong-password":
                 document.getElementById("message").innerHTML = `
                     <div class="alert alert-danger" role="alert">
-                        The E-Mail/Password you have entered is not valid.
+                        The password you have entered is wrong.
                     </div>
                 `;
-                console.log("Wrong password");
                 break;
             }
         });
