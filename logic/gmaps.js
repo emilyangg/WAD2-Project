@@ -2,6 +2,7 @@ var map;
 var markers = [];
 var route_list_counter = 0;
 var carpark_list_counter = 0;
+var directionsDisplay = null;
 window.value = {};
 
 // Embed map
@@ -175,7 +176,7 @@ function displayRoute(directionsService, directionsRenderer, pointA, pointB) {
 						<button type="button" class="btn btn-primary mt-1" onClick="route_info(${i})">Get Directions</button>
 					</li>
 				`;
-                new google.maps.DirectionsRenderer({
+                directionsDisplay = new google.maps.DirectionsRenderer({
                     map: map,
                     directions: response,
                     routeIndex: i
