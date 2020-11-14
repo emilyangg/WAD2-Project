@@ -4,11 +4,19 @@
 // Prompt users to enter location to generate route
 function prepare_generate_route(carpark) {
 	var destination = document.getElementById("endpoint").value;
-    document.getElementById("endpoint").value = carpark;
+	document.getElementById("end_div").innerHTML = 
+	`
+		<input type="text" class="form-control" placeholder="Traveling to..." id="endpoint" value="${carpark}" v-model="end">
+		<span id="endButton" class="input-group-append">
+			<button  type="button" class=" btn btn-info" onclick="display_map_home()">
+				Enter
+			</button>
+		</span>
+	`;
     document.getElementById("endButton").innerHTML = "";
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
+			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint" v-model="start">
 		</div>	
 	`;
 	document.getElementById("use_current_location").innerHTML = `
@@ -23,7 +31,7 @@ function prepare_generate_route(carpark) {
 		<input type='hidden' id='destination' value='${destination}'>
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
-				<button type="button" class="btn btn-block btn-success" style="display: inline" onclick="generate_route()">
+				<button type="button" class="btn btn-block btn-success" style="display: inline" onclick="generate_route()" :disabled='isDisabled'>
 					Generate Route
 					<i class="fas fa-route"></i>
 				</button>
@@ -34,7 +42,7 @@ function prepare_generate_route(carpark) {
 	document.getElementById("carpark_list").innerHTML = ""; 
 	document.getElementById("saved_trips_buttons").innerHTML += `
 		<div class="mt-3" id="save_this_trip">
-			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal">
+			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal" :disabled='isDisabled'>
 				Save this trip
 				<i class="fas fa-save"></i>
 			</button>
@@ -76,18 +84,19 @@ function prepare_generate_route(carpark) {
 		}
 	})
 
-	// var generate_route = new Vue({
-	// 	el:'#home',
+	var generate_route = new Vue({
+		el:'#home',
 		
-	// 	data: {
-	// 		start: '',
-	// 	},
-	// 	computed: {
-	// 		isDisabled: function(){
-	// 			return !(this.start.trim().length>0);
-	// 		}
-	// 	}
-	// })
+		data: {
+			start: '',
+			end: carpark
+		},
+		computed: {
+			isDisabled: function(){
+				return !(this.start.trim().length>0 && this.end.trim().length>0);
+			}
+		}
+	})
 		
 }
 
