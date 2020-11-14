@@ -235,6 +235,35 @@ function update_profile() {
     if (user) {
         var user_email = user.email;
         var user_pwd = user.password;
+        firebase.auth().signInWithEmailAndPassword(user_email, user_pwd).then(function () {
+            user.updateEmail(email).then(function() {
+                // Update successful.
+                email_update = true;
+            }).catch(function(error) {
+                // An error happened.
+                email_update = false;
+                console.log("Update email:", error);
+            });
+    
+            user.updatePassword(password).then(function() {
+                // Update successful.
+                pwd_update = true;
+            }).catch(function(error) {
+                // An error happened.
+                pwd_update = false;
+                console.log("Update password:", error);
+            });
+    
+            if (email_update && pwd_update) {
+                window.location.href = "index.html";
+            } else {
+                document.getElementById("message").innerHTML = `
+                    <div class="alert alert-danger" role="alert">
+                        There was an error updating your profile! Try again!
+                    </div>
+                `;
+            }
+        });
         // var credential = {
         //     email: user_email,
         //     password: user_pwd
@@ -243,14 +272,14 @@ function update_profile() {
             user_email,
             user_pwd
         );
-        console.log(credential)
-        user.reauthenticateWithCredential(credential).then(function() {
-            // User re-authenticated.
-            console.log("hi")
-          }).catch(function(error) {
-            // An error happened.
-            console.log(error)
-          });
+        // console.log(credential)
+        // user.reauthenticateWithCredential(credential).then(function() {
+        //     // User re-authenticated.
+        //     console.log("hi")
+        //   }).catch(function(error) {
+        //     // An error happened.
+        //     console.log(error)
+        //   });
         // var userId = user.uid;
         // var updates = {};
         // updates['/users/' + userId + '/username/'] = username;
@@ -260,35 +289,30 @@ function update_profile() {
         // var email_update = "";
         // var pwd_update = "";
 
-        // user.updateEmail(email).then(function() {
-        //     // Update successful.
-        //     email_update = true;
-        // }).catch(function(error) {
-        //     // An error happened.
-        //     email_update = false;
-        //     console.log("Update email:", error);
-        // });
-
-        // firebase.auth.AuthCredential
-
-        // user.updatePassword(password).then(function() {
-        //     // Update successful.
-        //     pwd_update = true;
-        // }).catch(function(error) {
-        //     // An error happened.
-        //     pwd_update = false;
-        //     console.log("Update password:", error);
-        // });
-
-        // if (email_update && pwd_update) {
-        //     window.location.href = "index.html";
-        // } else {
-        //     document.getElementById("message").innerHTML = `
-        //         <div class="alert alert-danger" role="alert">
-        //             There was an error updating your profile! Try again!
-        //         </div>
-        //     `;
-        // }
+        
     }
     
+}
+
+function send_password_reset() {
+    var auth = firebase.auth();
+    var emailAddress = document.getElementById("email").value
+
+    var actionCodeSettings = {
+        // After password reset, the user will be give the ability to go back
+        // to this page.
+        url: 'login.html',
+        handleCodeInApp: false
+    };
+
+    auth.sendPasswordResetEmail(emailAddress, actionCodeSettings).then(function() {
+        // Email sent.
+        document.getElementById("message").innerHTML = `
+            <div class="alert alert-success" role="alert">
+                An email has been sent to your email address!
+            </div>
+        `;
+    }).catch(function(error) {
+        // An error happened.
+    });
 }
