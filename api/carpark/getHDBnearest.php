@@ -73,9 +73,49 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
             $thisSTParking = $HDBInfoArr[$i]['short_term_parking'];
             $thisNParking = $HDBInfoArr[$i]['night_parking'];
             $thisRate = "$0.60";
+            $this_charging_interval = 30;
             if (in_array($thisCpNo, $centralCP)){
                 $thisRate = "$1.20";
             }
+
+            if ($thisFreeParking == "NO") {
+                $fullrates = [[
+                    'start' => '0000H',
+                    'end' => '2359H',
+                    'weekdayRates' => $thisRate,
+                    'weekdayInterval' => $this_charging_interval,
+                    'satRates' => $thisRate, 
+                    'satInterval' => $this_charging_interval,
+                    'sunRates' => $thisRate,
+                    'sunInterval' => $this_charging_interval
+                ]];
+
+            } elseif ($thisFreeParking == "SUN & PH FR 7AM-10.30PM") {
+                $fullrates = [
+                    [
+                        'start' => '0700H',
+                        'end' => '2230H',
+                        'weekdayRates' => $thisRate,
+                        'weekdayInterval' => $this_charging_interval,
+                        'satRates' => $thisRate, 
+                        'satInterval' => $this_charging_interval,
+                        'sunRates' => 0,
+                        'sunInterval' => $this_charging_interval
+                    ],
+                    [
+                        'start' => '2230H',
+                        'end' => '0700H',
+                        'weekdayRates' => $thisRate,
+                        'weekdayInterval' => $this_charging_interval,
+                        'satRates' => $thisRate, 
+                        'satInterval' => $this_charging_interval,
+                        'sunRates' => $thisRate,
+                        'sunInterval' => $this_charging_interval
+                    ]
+                ];
+            }
+
+
 
             // Convert EN to Lat and Long
             $thisLatLong = convert_svy21_to_xy($thisEasting, $thisNorthing);
@@ -92,7 +132,10 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
                 "Short Term Parking" => $thisSTParking, 
                 "Night Parking" => $thisNParking,
                 "Rates" => $thisRate,
-                "DistanceToDest" => $thisDistance 
+                "DistanceToDest" => $thisDistance,
+
+                "ChargingInterval" => $this_charging_interval,
+                "FullRates" => $fullrates
             ];
 
         }
