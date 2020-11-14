@@ -7,15 +7,24 @@ function call_carpark_api(lat, lng) {
 	request.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = JSON.parse(this.responseText);
+			if(response['HDB'].length == 0 && response['URA'].length == 0){
+				document.getElementById("carpark_list").innerHTML = `
+				<div class="alert alert-danger" role="alert">
+					There are no carparks nearby! Please enter a new location!
+				</div>
+				`;
+			} else{
+				var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
+				var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
+				
+				var combined_list = hdb_list.concat(ura_list);
+				window.value['carparks_list'] = combined_list;
+	
+				sortby_distance();
+			}
 
-			var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
-			var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
+		} 	
 			
-			var combined_list = hdb_list.concat(ura_list);
-			window.value['carparks_list'] = combined_list;
-
-			sortby_distance();
-		}
 	}
 	var url = "api/carpark/search.php?lat=" + lat + "&lng=" + lng;
 	request.open("GET", url, true);
@@ -216,7 +225,7 @@ function display_carpark_list(display_carpark_list) {
 	carpark_display_str += `
 		</ul>
 	`;
-	document.getElementById("carpark_list").innerHTML = carpark_display_str; 
+	document.getElementById("carpark_list").innerHTML = carpark_display_str;
 	document.getElementById("carpark_info").innerHTML = "";
 	document.getElementById("route_list").innerHTML = "";
 	document.getElementById("route_info").innerHTML = "";
