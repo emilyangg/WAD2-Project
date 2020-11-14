@@ -56,6 +56,7 @@ function prepare_generate_route(carpark) {
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 				<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal" :disabled='isDisabled'>
 					Save
+					<i class="fas fa-save"></i>
 				</button>
 			</div>
 			</div>

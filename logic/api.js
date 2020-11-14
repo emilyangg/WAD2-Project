@@ -8,15 +8,24 @@ function call_carpark_api(lat, lng) {
 	request.onreadystatechange = function() {
 		if (this.readyState == 4 && this.status == 200) {
 			var response = JSON.parse(this.responseText);
+			if(response['HDB'].length == 0 && response['URA'].length == 0){
+				document.getElementById("carpark_list").innerHTML = `
+				<div class="alert alert-danger" role="alert">
+					There are no carparks nearby! Please enter a new location!
+				</div>
+				`;
+			} else{
+				var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
+				var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
+				
+				var combined_list = hdb_list.concat(ura_list);
+				window.value['carparks_list'] = combined_list;
+	
+				sortby_distance();
+			}
 
-			var hdb_list = HDB_carpark_to_list(response["HDB"], lat, lng);
-			var ura_list = URA_carpark_to_list(response["URA"], lat, lng);
+		} 	
 			
-			var combined_list = hdb_list.concat(ura_list);
-			window.value['carparks_list'] = combined_list;
-
-			sortby_distance();
-		}
 	}
 	var url = "api/carpark/search.php?lat=" + lat + "&lng=" + lng;
 	request.open("GET", url, true);
@@ -41,6 +50,10 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
 		var avail_lots = carpark_obj[carpark].LotAvail;
 		var avail_lots_color = "color: ";
 
+		var fullrates = carpark_obj[carpark].FullRates;
+		console.log(address);
+		console.log(fullrates);
+
 		if (avail_lots < 11) {
             avail_lots_color += "red";
     	}
@@ -60,7 +73,7 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
 		else {
 			rates_color += "red";
 		}
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color,fullrates])
 
 	}
 
@@ -78,10 +91,14 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 		var rates = carpark_obj[carpark]["Rates"];
 		var rates_float = parseFloat(rates.slice(1,rates.length));
 		var rates_color =  "color: ";
-		var charge_interval = "30 mins";
+		var charge_interval = carpark_obj[carpark]["ChargingInterval"];
 		
 		var avail_lots = carpark_obj[carpark]["Lots Available"];
 		var avail_lots_color = "color: ";
+
+		var fullrates = carpark_obj[carpark]["FullRates"];
+		console.log(address);
+		console.log(fullrates);
 
 		if (avail_lots < 11) {
             avail_lots_color += "red";
@@ -108,7 +125,7 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 			avail_lots_color = "color: blue"
 		}
 
-		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color])
+		carpark_list.push([distance,carpark_lat,carpark_lng,address,charge_interval,rates_float,rates_color,avail_lots,avail_lots_color,fullrates])
 	}
 	
 	return carpark_list
@@ -173,7 +190,6 @@ function display_carpark_list(display_carpark_list) {
 				</div>
 			</div>
 		</div>
-		
 		<ul class="list-group my-2">
 	`;
 	carpark_list_counter = 0;
@@ -208,6 +224,12 @@ function display_carpark_list(display_carpark_list) {
 						Locate Carpark
 					</button>
 				</div>
+
+				<div class="btn-group mt-1">
+					<button type="button" class="btn btn-primary" onclick="view_fullrates('${carpark_list_counter}')">
+						View Full Rates
+					</button>
+				</div>
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
@@ -216,7 +238,7 @@ function display_carpark_list(display_carpark_list) {
 	carpark_display_str += `
 		</ul>
 	`;
-	document.getElementById("carpark_list").innerHTML = carpark_display_str; 
+	document.getElementById("carpark_list").innerHTML = carpark_display_str;
 	document.getElementById("carpark_info").innerHTML = "";
 	document.getElementById("route_list").innerHTML = "";
 	document.getElementById("route_info").innerHTML = "";
@@ -239,4 +261,13 @@ function findNearbyCarpark(end_location) {
 	document.getElementById("save_this_trip").innerHTML = "";
 	document.getElementById("saved_list").innerHTML = "";
 	display_map_home()
+}
+
+// Update the modal's content to display the full rates of this selected carpark
+function view_fullrates(carpark_index) {
+	carpark_index = parseInt(carpark_index);
+	var selected_carpark = window.value['carparks_list'][carpark_index-1];
+	var fullrates = selected_carpark[9];
+	console.log(selected_carpark);
+	console.log(fullrates);
 }
