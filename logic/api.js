@@ -41,6 +41,8 @@ function URA_carpark_to_list(carpark_obj, lat, lng) {
 		var avail_lots_color = "color: ";
 
 		var fullrates = carpark_obj[carpark].FullRates;
+		console.log(address);
+		console.log(fullrates);
 
 		if (avail_lots < 11) {
             avail_lots_color += "red";
@@ -85,6 +87,8 @@ function HDB_carpark_to_list(carpark_obj, lat, lng) {
 		var avail_lots_color = "color: ";
 
 		var fullrates = carpark_obj[carpark]["FullRates"];
+		console.log(address);
+		console.log(fullrates);
 
 		if (avail_lots < 11) {
             avail_lots_color += "red";
@@ -211,7 +215,7 @@ function display_carpark_list(display_carpark_list) {
 						Locate Carpark
 					</button>
 				</div>
-				
+
 				<div class="btn-group mt-1">
 					<button type="button" class="btn btn-primary" onclick="view_fullrates('${carpark_list_counter}')">
 						View Full Rates
@@ -241,7 +245,8 @@ function findNearbyCarpark(end_location) {
 
 function view_fullrates(carpark_index) {
 	carpark_index = parseInt(carpark_index);
-	var selected_carpark = window.value['carparks_list'][carpark_index];
-	var fullrates = carpark[9];
+	var selected_carpark = window.value['carparks_list'][carpark_index-1];
+	var fullrates = selected_carpark[9];
+	console.log(selected_carpark);
 	console.log(fullrates);
 }
