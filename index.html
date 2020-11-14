@@ -100,6 +100,25 @@
             width: 100%;
             z-index: 9999999;
         }
+        #backToTopBtn {
+	        display: none; /* Hidden by default */
+	        position: fixed; /* Fixed/sticky position */
+	        bottom: 20px; /* Place the button at the bottom of the page */
+	        left: 30px; /* Place the button 30px from the right */
+            z-index: 999; /* Make sure it does not overlap */
+            border: none; /* Remove borders */
+            outline: none; /* Remove outline */
+            background-color: grey; /* Set a background color */
+            color: white; /* Text color */
+            cursor: pointer; /* Add a mouse pointer on hover */
+            padding: 15px; /* Some padding */
+            border-radius: 10px; /* Rounded corners */
+            font-size: 18px; /* Increase font size */
+        }
+  
+        #backToTopBtn:hover {
+	        background-color: #555; /* Add a dark-grey background on hover */
+        }
     </style>
     
     <title>WhereToPark</title>
@@ -123,7 +142,14 @@
     
             <div class="container mt-3" id="home">
                 <div id="startpoint_input">
+
                 </div>
+
+                
+                <div id="use_current_location">
+
+                </div>
+
 
                 <div id="endpoint_input">
                     <div class="input-group mb-3">
@@ -136,10 +162,6 @@
                     </div>
                 </div>
 
-                <div id="use_current_location">
-
-                </div>
-
                 <div id="generate_route">
                     
                 </div>
@@ -147,7 +169,10 @@
                 <div id="saved_trips">
                     <div class="btn-group mb-3" style="display: flex">
                         <div class="col" id="saved_trips_buttons">
-                            <button id="saved_trips_btn" type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved()">View Saved Trips</button>
+                            <button id="saved_trips_btn" type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved()">
+                                View Saved Trips
+                                <i class="fas fa-list-ul"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -180,6 +205,9 @@
         </div>
 
     </div>
+
+    <!-- html for back-to-top button -->
+    <button onclick="topFunction()" id="backToTopBtn" title="Go to top">Top</button>
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
