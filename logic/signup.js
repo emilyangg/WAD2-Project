@@ -41,8 +41,8 @@ function check_for_authentication() {
                     <div class="dropdown-toggle" style="float: right;font-size: 0.5em;" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fas fa-user-circle mt-1 mr-1"></i> ${username}
                         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" onClick="location.href='./profile.html'">My Profile</a>
-                            <a class="dropdown-item" onclick="sign_out()">Sign out</a>
+                            <a class="dropdown-item" onClick="location.href='./profile.html'"><i class="fa fa-user"></i>    My Profile</a>
+                            <a class="dropdown-item" onclick="sign_out()"><i class="fa fa-sign-out"></i>    Sign out</a>
                         </div>
                     </div>
                 `;
