@@ -252,6 +252,7 @@ function findNearbyCarpark(end_location) {
 	display_map_home()
 }
 
+// Update the modal's content to display the full rates of this selected carpark
 function view_fullrates(carpark_index) {
 	carpark_index = parseInt(carpark_index);
 	var selected_carpark = window.value['carparks_list'][carpark_index-1];
