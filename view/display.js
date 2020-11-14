@@ -3,17 +3,18 @@
 
 // Prompt users to enter starting location for generation of route
 function prepare_generate_route(endpoint) {
+	console.log(endpoint);
     document.getElementById("endpoint").value = endpoint;
     document.getElementById("endButton").innerHTML = "";
 	document.getElementById("startpoint_input").innerHTML = `
 		<div class="input-group mb-3">
-			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint">
+			<input type="text" class="form-control" placeholder="Traveling from..." id="startpoint" >
 			
 		</div>	
 	`;
 	document.getElementById("use_current_location").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
-			<button type="button" class="btn btn-info" style="width=100%"; onclick="getGeoLocation()">
+			<button type="button" class="btn btn-info" style="width=100%" onclick="getGeoLocation()">
 				Use Current Location
 			</button>
 		</div>
@@ -21,7 +22,7 @@ function prepare_generate_route(endpoint) {
 	document.getElementById("generate_route").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
-				<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="generate_route()">Generate Route</button>
+				<button type="button" class="btn btn-block btn-primary" style="display: inline" onclick="generate_route()" >Generate Route</button>
 			</div>
 		</div>
 	`;
@@ -33,23 +34,50 @@ function prepare_generate_route(endpoint) {
 		</button>
 
 		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Trip Info</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-				</button>
+			<div class="modal-dialog">
+				<div class="modal-content" id="savetrip_modal">
+					<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Trip Info</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+						<input type="text" class="form-control" placeholder="Trip Name" id="trip_name" v-model='trip_name'>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+						<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal" :disabled='isDisabled'>Save</button>
+					</div>
+				</div>
 			</div>
-			<div class="modal-body">
-				<input type="text" class="form-control" placeholder="Trip Name" id="trip_name">
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal">Save</button>
-			</div>
-			</div>
-		</div>
 		</div>
 	`;
+
+	// Vue reactive for save this trip button
+	var save_trips = new Vue({
+		el:'#savetrip_modal',
+		data: {
+			trip_name: ''
+		},
+		computed: {
+			isDisabled: function(){
+				return !(this.trip_name.trim().length >0);
+			}
+		}
+	})
+
+	// var generate_route = new Vue({
+	// 	el:'#home',
+		
+	// 	data: {
+	// 		start: '',
+	// 	},
+	// 	computed: {
+	// 		isDisabled: function(){
+	// 			return !(this.start.trim().length>0);
+	// 		}
+	// 	}
+	// })
+		
 }
