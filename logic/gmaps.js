@@ -74,7 +74,7 @@ function display_map_home() {
 		map: map,
 		title: "Destination",
 		icon: {                             
-			url: "http://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
+			url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
 		}
 	});
 	markers.push(marker);
