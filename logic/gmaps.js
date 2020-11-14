@@ -90,7 +90,9 @@ function display_markers(lat, lng) {
 		title: "Carpark",
 		label: carpark_list_counter.toString()
     });
-    
+    marker.addListener("click", () => {
+		map.setCenter({lat: lat, lng: lng});
+	})
 	markers.push(marker);
 }
 
