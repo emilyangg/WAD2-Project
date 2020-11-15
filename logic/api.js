@@ -208,7 +208,11 @@ function display_carpark_list(display_carpark_list) {
 
 		carpark_display_str += `
 			<li class="list-group-item">
-				<span class="font-weight-bold">${carpark_list_counter}. ${address}</span><br>	
+				<span class="font-weight-bold">${carpark_list_counter}. ${address}</span>
+				<span style="float:right" title="View Full Rates">
+					<i class="fas fa-info-circle" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="view_fullrates(${carpark_list_counter})"></i>
+				</span>
+				<br>	
 				<span>Distance from Destination: ${distance}km</span><br>
 				<span style="${avail_lots_color}">Available Lots: ${avail_lots}</span><br>
 				<span style="${rates_color}">Rates: $${rates} per ${charge_interval}</span><br>
@@ -224,12 +228,6 @@ function display_carpark_list(display_carpark_list) {
 					</button>
 				</div>
 
-				<div class="btn-group mt-1">
-					<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg" onclick="view_fullrates(${carpark_list_counter})">
-						View Full Rates
-					</button>
-				</div>
-				
 				<div class="modal fade bd-example-modal-lg " role="dialog" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myLargeModalLabel" aria-hidden="true">
 					<div class="modal-dialog modal-lg">
 						<div class="modal-content">
@@ -248,7 +246,7 @@ function display_carpark_list(display_carpark_list) {
 						</div>
 					</div>
 				</div>
-				
+
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
