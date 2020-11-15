@@ -22,8 +22,8 @@ function prepare_generate_route(carpark) {
 	document.getElementById("use_current_location").innerHTML = `
 		<div class="btn-group mb-3" style="display: flex">
 			<button type="button" class="btn btn-secondary" style="width=100%" onclick="getGeoLocation()">
-				Use Current Location 
 				<i class="fas fa-location-arrow"></i>
+				Use Current Location 
 			</button>
 		</div>
 	`;
@@ -32,8 +32,8 @@ function prepare_generate_route(carpark) {
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
 				<button type="button" class="btn btn-block btn-success" style="display: inline" onclick="generate_route()" :disabled='isDisabledHome'>
-					Generate Route
 					<i class="fas fa-route"></i>
+					Generate Route
 				</button>
 			</div>
 		</div>
@@ -45,8 +45,8 @@ function prepare_generate_route(carpark) {
 	document.getElementById("saved_trips_buttons").innerHTML += `
 		<div class="mt-3" id="save_this_trip">
 			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal" :disabled='isDisabledHome'>
+				<i class="fas fa-save"></i>	
 				Save this trip
-				<i class="fas fa-save"></i>
 			</button>
 		</div>
 
@@ -65,8 +65,8 @@ function prepare_generate_route(carpark) {
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 					<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal" :disabled='isDisabledModal'>
-						Save
 						<i class="fas fa-save"></i>
+						Save
 					</button>
 				</div>
 			</div>
