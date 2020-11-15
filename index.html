@@ -158,9 +158,9 @@
 
                     <div id="endpoint_input">
                         <div class="input-group mb-3" id="end_div">
-                            <input type="text" class="form-control" placeholder="Traveling to..." id="endpoint">
+                            <input type="text" class="form-control" placeholder="Traveling to..." id="endpoint" v-model="endLanding">
                             <span id="endButton" class="input-group-append">
-                                <button  type="button" class=" btn btn-info" onclick="display_map_home()">
+                                <button  type="button" class=" btn btn-info" onclick="display_map_home()" :disabled='isDisabledLanding'>
                                     Enter
                                 </button>
                             </span>
@@ -170,18 +170,23 @@
                     <div id="generate_route">
                         
                     </div>
-                </div>
                 
-                <div id="saved_trips">
-                    <div class="btn-group mb-3" style="display: flex">
-                        <div class="col" id="saved_trips_buttons">
-                            <button id="saved_trips_btn" type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved()">
-                                View Saved Trips
-                                <i class="fas fa-list-ul"></i>
-                            </button>
+                
+                    <div id="saved_trips">
+                        <div class="btn-group mb-3" style="display: flex">
+                            <div class="col" id="saved_trips_buttons">
+                                <button id="saved_trips_btn" type="button" class="btn btn-block btn-primary" style="display: inline" onclick="display_saved()">
+                                    View Saved Trips
+                                    <i class="fas fa-list-ul"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div>
+
             </div>
                     
             <div class="container" id="carpark_list">
@@ -220,6 +225,22 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 
+    <script>
+        var Landing = new Vue({
+		el:'#end_div',
+
+		data: {
+			endLanding: ''
+		},
+
+		computed: {
+			isDisabledLanding: function(){
+				// console.log(this.name);
+				return !(this.endLanding.trim().length>0);
+			}
+		}
+	})
+    </script>
 
 </body>
 </html>

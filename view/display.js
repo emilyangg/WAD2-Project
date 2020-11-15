@@ -44,7 +44,7 @@ function prepare_generate_route(carpark) {
 	document.getElementById("carpark_list").innerHTML = ""; 
 	document.getElementById("saved_trips_buttons").innerHTML += `
 		<div class="mt-3" id="save_this_trip">
-			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal" :disabled='isDisabledHome' onclick="vue_modal()">
+			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal" :disabled='isDisabledHome'>
 				Save this trip
 				<i class="fas fa-save"></i>
 			</button>
@@ -73,34 +73,27 @@ function prepare_generate_route(carpark) {
 		</div>
 	`;
 
-	// Vue reactive for save this trip button in Modal
-	var save_trips = new Vue({
-		el:'#savetrip_modal',
+	// Destory Vue instance for the landing page validation
+	Landing.$destroy();
 
-		data: {
-			name: ''
-		},
-
-		computed: {
-			isDisabledModal: function(){
-				// console.log(this.name);
-				return !(this.name.trim().length>0);
-			}
-		}
-	})
-
-	// Vue reactive for save this trip and generate routes button in home page
+	// Vue reactive validation for 'save this trip' home page button, 'generate routes'  home page button and 'save
 	var generate_route = new Vue({
 		el:'#startEndHome',
 		
 		data: {
 			start: '',
-			end: carpark
+			end: carpark,
+			name: ''
 		},
 		computed: {
 			isDisabledHome: function(){
 				// console.log(this.start);
 				return !(this.start.trim().length>0 && this.end.trim().length>0);
+			},
+
+			isDisabledModal: function(){
+				// console.log(this.name);
+				return !(this.name.trim().length>0);
 			}
 		}
 	})
