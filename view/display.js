@@ -76,7 +76,7 @@ function prepare_generate_route(carpark) {
 	// Destory Vue instance for the landing page validation
 	Landing.$destroy();
 
-	// Vue reactive validation for 'save this trip' home page button, 'generate routes'  home page button and 'save
+	// Vue reactive validation for 'save this trip' home page button, 'generate routes'  home page button and 'save' button in modal
 	var generate_route = new Vue({
 		el:'#startEndHome',
 
@@ -85,7 +85,7 @@ function prepare_generate_route(carpark) {
 			end: carpark,
 			name: ''
 		},
-		
+
 		computed: {
 			isDisabledHome: function(){
 				// console.log(this.start);
