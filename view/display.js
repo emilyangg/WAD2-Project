@@ -79,12 +79,13 @@ function prepare_generate_route(carpark) {
 	// Vue reactive validation for 'save this trip' home page button, 'generate routes'  home page button and 'save
 	var generate_route = new Vue({
 		el:'#startEndHome',
-		
+
 		data: {
 			start: '',
 			end: carpark,
 			name: ''
 		},
+		
 		computed: {
 			isDisabledHome: function(){
 				// console.log(this.start);
