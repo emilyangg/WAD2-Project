@@ -249,6 +249,7 @@ function display_carpark_list(display_carpark_list) {
 						</div>
 					</div>
 				</div>
+				
 			</li>
 		`;
 		display_markers(carpark_lat, carpark_lng, carpark_list_counter);
