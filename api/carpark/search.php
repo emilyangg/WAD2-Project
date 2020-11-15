@@ -2,7 +2,7 @@
 require_once 'getURAnearest.php';
 require_once 'getHDBnearest.php';
 
-// // SMU
+// SMU
 // $lat = 1.2953;
 // $lng = 103.8506;
 

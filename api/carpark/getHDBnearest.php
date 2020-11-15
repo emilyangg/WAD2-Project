@@ -73,7 +73,7 @@ function nearbyHDBCPDetails($HDBInfoArr,$inEasting,$inNorthing,$range) {
             $thisSTParking = $HDBInfoArr[$i]['short_term_parking'];
             $thisNParking = $HDBInfoArr[$i]['night_parking'];
             $thisRate = "$0.60";
-            $this_charging_interval = 30;
+            $this_charging_interval = '30 mins';
             if (in_array($thisCpNo, $centralCP)){
                 $thisRate = "$1.20";
             }
