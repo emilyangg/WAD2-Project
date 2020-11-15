@@ -31,7 +31,7 @@ function prepare_generate_route(carpark) {
 		<input type='hidden' id='destination' value='${destination}'>
 		<div class="btn-group mb-3" style="display: flex">
 			<div class="col">
-				<button type="button" class="btn btn-block btn-success" style="display: inline" onclick="generate_route()" :disabled='isDisabled'>
+				<button type="button" class="btn btn-block btn-success" style="display: inline" onclick="generate_route()" :disabled='isDisabledHome'>
 					Generate Route
 					<i class="fas fa-route"></i>
 				</button>
@@ -39,10 +39,12 @@ function prepare_generate_route(carpark) {
 		</div>
 	`;
 
+	
+
 	document.getElementById("carpark_list").innerHTML = ""; 
 	document.getElementById("saved_trips_buttons").innerHTML += `
 		<div class="mt-3" id="save_this_trip">
-			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal" :disabled='isDisabled'>
+			<button type="button" class="btn btn-block btn-primary" style="display: inline" data-toggle="modal" data-target="#exampleModal" :disabled='isDisabledHome' onclick="vue_modal()">
 				Save this trip
 				<i class="fas fa-save"></i>
 			</button>
@@ -51,48 +53,53 @@ function prepare_generate_route(carpark) {
 		<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content" id="savetrip_modal">
-			<div class="modal-header">
-				<h5 class="modal-title" id="exampleModalLabel">Trip Info</h5>
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-				<span aria-hidden="true">&times;</span>
-				</button>
-			</div>
-			<div class="modal-body">
-				<input type="text" class="form-control" placeholder="Trip Name" id="trip_name" v-model="trip_name">
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-				<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal" :disabled='isDisabled'>
-					Save
-					<i class="fas fa-save"></i>
-				</button>
-			</div>
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Trip Info</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<input type="text" class="form-control" placeholder="Trip Name" id="trip_name" v-model="name">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" onclick="save_this_trip()" data-dismiss="modal" :disabled='isDisabledModal'>
+						Save
+						<i class="fas fa-save"></i>
+					</button>
+				</div>
 			</div>
 		</div>
 	`;
 
-	// Vue reactive for save this trip button
+	// Vue reactive for save this trip button in Modal
 	var save_trips = new Vue({
 		el:'#savetrip_modal',
+
 		data: {
-			trip_name: ''
+			name: ''
 		},
+
 		computed: {
-			isDisabled: function(){
-				return !(this.trip_name.trim().length >0);
+			isDisabledModal: function(){
+				// console.log(this.name);
+				return !(this.name.trim().length>0);
 			}
 		}
 	})
 
+	// Vue reactive for save this trip and generate routes button in home page
 	var generate_route = new Vue({
-		el:'#home',
+		el:'#startEndHome',
 		
 		data: {
 			start: '',
 			end: carpark
 		},
 		computed: {
-			isDisabled: function(){
+			isDisabledHome: function(){
+				// console.log(this.start);
 				return !(this.start.trim().length>0 && this.end.trim().length>0);
 			}
 		}
