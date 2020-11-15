@@ -114,12 +114,19 @@ function display_saved() {
                     saved_list += `
                         <li class="list-group-item">
                             <span class="font-weight-bold">${trip_name}</span>
-                            <span style="float:right"><i class="far fa-edit" onclick="edit_trip('${trip}','${trip_name}','${start_location}','${end_location}')"></i>
-                            <i class="far fa-trash-alt" onclick="delete_trip('${trip}')"></i></span><br>
+                            <span style="float:right">
+                                <i class="far fa-edit" onclick="edit_trip('${trip}','${trip_name}','${start_location}','${end_location}')"></i>
+                                <i class="far fa-trash-alt" onclick="delete_trip('${trip}')"></i>
+                            </span>
+                            <br>
                             <span>Start Location: ${start_location}</span><br>
                             <span>End Location: ${end_location}</span><br>
-                            <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${end_location}')">Nearby Carparks</button>
-                            <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${start_location}','${end_location}')">Find Routes</button>
+                            <button type="button" class="btn btn-primary mt-1" onClick="findNearbyCarpark('${end_location}')">
+                                Nearby Carparks
+                            </button>
+                            <button type="button" class="btn btn-primary mt-1" onClick="findRoute('${start_location}','${end_location}')">
+                                Find Routes
+                            </button>
                         </li>
                     `;
                 }
