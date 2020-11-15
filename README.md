@@ -9,3 +9,5 @@ https://www.ura.gov.sg/uraDataService/getTokenForm?txtAcessKey=31d76d00-70aa-46b
 
 4. Navigate to index.html
 
+5. Youtube Link: https://youtu.be/HpQ7fkPT0go
+
