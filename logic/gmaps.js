@@ -1,9 +1,9 @@
 var map;
+var markers = [];
 var route_list_counter = 0;
 var carpark_list_counter = 0;
 var directionsDisplay = null;
-window.value = {'markers':[]};
-
+window.value = {};
 
 // Embed map
 function initMap() {
@@ -57,7 +57,7 @@ function convert_geocode(address) {
 
 // Displays your destination on the map
 function display_map_home() {
-	if(window.value['markers'].length > 0) {
+	if(markers.length > 0) {
 		clearMarkers();
     }
     document.getElementById('carpark_list').innerHTML = `<div id="loading"></div>`;
@@ -78,7 +78,7 @@ function display_map_home() {
 			url: "https://maps.google.com/mapfiles/ms/icons/blue-dot.png"                           
 		}
 	});
-	window.value['markers'].push(marker);
+	markers.push(marker);
 	call_carpark_api(latitude, longitude);
 }
 
@@ -94,15 +94,15 @@ function display_markers(lat, lng) {
     marker.addListener("click", () => {
 		map.setCenter({lat: lat, lng: lng});
 	})
-	window.value['markers'].push(marker);
+	markers.push(marker);
 }
 
 // Clear markers on map
 function clearMarkers(start = 0) {
-    for (var i = start; i < window.value['markers'].length; i++) {
-        window.value['markers'][i].setMap(null);
+    for (var i = start; i < markers.length; i++) {
+        markers[i].setMap(null);
     }
-    window.value['markers'] = window.value['markers'].slice(0,start);
+    markers = [];
 }
 
 // Generate multiple routes based on start and end location

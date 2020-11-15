@@ -1,4 +1,3 @@
-window.value = {};
 
 // Call carpark API in read.php
 function call_carpark_api(lat, lng) {
